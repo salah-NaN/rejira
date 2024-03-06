@@ -46,23 +46,23 @@ module.exports = (router, Model) => {
     })
 
     //  para modificar la fk
-    router.put('/projects/:projectId/users/:userId', async (req, res) => {
-        const { userId } = req.params
-        const { projectId } = req.params
-        const data = req.body
-        try {
-            const project = await Model.findByPk(projectId)
-            if (!project) res.status(404).json({ message: 'Not found' })
-            await project.update({
-                ...data,
-                ["user_id"]: userId
-            })
+    // router.put('/projects/:projectId/users/:userId', async (req, res) => {
+    //     const { userId } = req.params
+    //     const { projectId } = req.params
+    //     const data = req.body
+    //     try {
+    //         const project = await Model.findByPk(projectId)
+    //         if (!project) res.status(404).json({ message: 'Not found' })
+    //         await project.update({
+    //             ...data,
+    //             ["user_id"]: userId
+    //         })
             
-            res.json(project)
-        } catch (error) {
-            res.status(400).json({ error: error.message })
-        }
-    })
+    //         res.json(project)
+    //     } catch (error) {
+    //         res.status(400).json({ error: error.message })
+    //     }
+    // })
 
 
     //IMPORTANTE - PAUTAS

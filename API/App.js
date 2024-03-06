@@ -1,6 +1,7 @@
 // imports
 const express = require('express')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 const routes = require('./routes/indexRoutes')
 
 
@@ -10,6 +11,7 @@ const app = express()
 
 // uses
 app.use(express.json())
+app.use(cookieParser())
 app.use(cors())
     // routes
     app.use('/api', routes)

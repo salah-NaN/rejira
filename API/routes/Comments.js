@@ -65,23 +65,23 @@ module.exports = (router, Model) => {
 
     // para modificar las fks de los comentarios, para simplificar haré
     // que se modifiquen los 2 a la vez, en lugar de crear 3 funciones
-    router.put('/comments/:commentId/users/:userId/tasks/:taskId', async (req, res) => {
-        const { userId } = req.params
-        const { commentId } = req.params
-        const { taskId } = req.params
-        const data = req.body
-        try {
-            const comment = await Model.findByPk(commentId)
-            if (!comment) res.status(404).json({ message: 'Not found' })
-            await comment.update({
-                ...data,
-                ["user_id"]: userId,
-                ["task_id"]: taskId
-            })
-            res.json(comment)
-        } catch (error) {
-            res.status(400).json({ error: error.message })
-        }
-    })
+    // router.put('/comments/:commentId/users/:userId/tasks/:taskId', async (req, res) => {
+    //     const { userId } = req.params
+    //     const { commentId } = req.params
+    //     const { taskId } = req.params
+    //     const data = req.body
+    //     try {
+    //         const comment = await Model.findByPk(commentId)
+    //         if (!comment) res.status(404).json({ message: 'Not found' })
+    //         await comment.update({
+    //             ...data,
+    //             ["user_id"]: userId,
+    //             ["task_id"]: taskId
+    //         })
+    //         res.json(comment)
+    //     } catch (error) {
+    //         res.status(400).json({ error: error.message })
+    //     }
+    // })
 
 }   

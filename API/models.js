@@ -86,6 +86,10 @@ const Tasks = sequelize.define('tasks', {
     },
     title: {
         type: Sequelize.STRING,
+    },
+    user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true
     }
 }, { timestamps: true })
 
