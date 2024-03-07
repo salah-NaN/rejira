@@ -3,24 +3,24 @@ const { readItems, readItem, createItem, updateItem, deleteItem } = require('../
 
 // CRUD comments
 
-module.exports = (router, Model) => {
-    router.get('/comments', async (req, res) => await readItems(req, res, Model))
-    router.get('/comments/:id', async (req, res) => await readItem(req, res, Model))
-    router.put('/comments/:id', async (req, res) => await updateItem(req, res, Model))
-    router.delete('/comments/:id', async (req, res) => await deleteItem(req, res, Model))
+module.exports = (router, Model, check) => {
+    router.get('/comments', check, async (req, res) => await readItems(req, res, Model))
+    router.get('/comments/:id', check, async (req, res) => await readItem(req, res, Model))
+    router.put('/comments/:id', check, async (req, res) => await updateItem(req, res, Model))
+    router.delete('/comments/:id', check, async (req, res) => await deleteItem(req, res, Model))
 
 
     // crear un comentario que tiene asociado un usuario y una tarea
-    router.post('/comments/users/:userId/tasks/:taskId', async (req, res) => {
-        const { userId } = req.params
+    router.post('/comments/tasks/:taskId', check, async (req, res) => {
         const { taskId } = req.params
-        const data = req.body
+        const { user_id, ...restData } = req.body
         try {
             const item = await Model.create({
-                ...data,
-                ["user_id"]: userId,
+                ...restData,
+                user_id,
                 ["task_id"]: taskId
             })
+            if (!item) res.status(404).json({ message: 'Not found' })
             res.status(201).json(item)
         } catch (error) {
             res.status(400).json({ error: error.message })
@@ -28,17 +28,16 @@ module.exports = (router, Model) => {
     })
 
 
-    // que comentarios ha comentado cada usuario 
-    router.get('/comments/users/:userId', async (req, res) => {
-        const userId = req.params.userId
+    // PENDIENTE - que comentarios ha comentado el user logueado 
+    router.get('/commentsByUser', check, async (req, res) => {
+        const { user_id } = req.body
         try {
             const comments = await Model.findAll({
                 where: {
-                    ["user_id"]: userId
+                    user_id
                 }
             })
-
-            if(!comments) res.status(404).json({message: 'Not found'})
+            if (!comments) res.status(404).json({ message: 'Not found' })
             res.json(comments)
         } catch (error) {
             res.status(400).json({ error: error.message })
@@ -46,17 +45,20 @@ module.exports = (router, Model) => {
     })
 
 
-    // que comentarios hay en una tarea específica
-    router.get('/comments/tasks/:taskId', async (req, res) => {
+    // que comentarios hay en una tarea específica cuyo user es el logueado
+    router.get('/comments/tasks/:taskId', check, async (req, res) => {
         const taskId = req.params.taskId
+        const { user_id } = req.body
         try {
             const comments = await Model.findAll({
                 where: {
                     ["task_id"]: taskId
                 }
             })
+            if (!comments) res.status(404).json({ message: 'Not found' })
 
-            if(!comments) res.status(404).json({message: 'Not found'})
+            const send = comments.every(comment => comment.user_id === user_id)
+            if (!send) return res.status(401).json({ message: 'Unauthorized' })
             res.json(comments)
         } catch (error) {
             res.status(400).json({ error: error.message })
@@ -84,4 +86,15 @@ module.exports = (router, Model) => {
     //     }
     // })
 
-}   
+}
+
+/*
+    de Comments tengo:
+    - crear un comment a partir del user logueado y de la tarea asociada
+    - mostrar todos los comentarios de un user logueado PENDIENTE: 
+        ya que tiene que ver con el network de la app
+    - mostrar todos los comentarios de una tarea cuyo user es el que está logueado
+
+
+    - CRUD super usuario
+    */ 

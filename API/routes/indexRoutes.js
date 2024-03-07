@@ -1,4 +1,4 @@
-// en ./projects hay informacion relevante
+// en Users.js:14 hay informacion relevante
 
 // imports
 const express = require('express')
@@ -39,12 +39,12 @@ const check = async (req, res, next) => {
 }
 
 // all endpoints for each model execution
-usersController(router, Users, secretKey, jwt, check)
-tagsController(router, Tags)
-projectsController(router, Projects)
-commentsController(router, Comments)
-tasksController(router, Tasks, secretKey, jwt, check)
-NM_task_has_tagController(router, Tasks, Tags)
+usersController(router, Users,check)
+tagsController(router, Tags,check)
+projectsController(router, Projects,check)
+commentsController(router, Comments,check)
+tasksController(router, Tasks, check)
+NM_task_has_tagController(router, Tasks, Tags,check)
 
 
 

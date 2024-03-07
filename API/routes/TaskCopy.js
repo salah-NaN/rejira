@@ -1,52 +1,17 @@
 const { readItems, readItem, createItem, updateItem, deleteItem } = require('../generics')
 
-// const verify = async (req, res, next, Tasks) => {
-//     const {user_id} = req.body
-//     try {
-//         if ()
-//     } catch (error) {
-        
-//     }
-// }
+
 // CRUD tasks
 
-module.exports = (router, Model, check) => {
-    router.get('/tasks', check,  async (req, res) => await readItems(req, res, Model))
-    router.get('/tasks/:id', check,  async (req, res) => await readItem(req, res, Model))
-    router.put('/tasks/:id', check,  async (req, res) => await updateItem(req, res, Model))
-    router.delete('/tasks/:id', check,  async (req, res) => await deleteItem(req, res, Model))
+module.exports = (router, Model,check) => {
+    router.get('/tasks', async (req, res) => await readItems(req, res, Model))
+    router.get('/tasks/:id', async (req, res) => await readItem(req, res, Model))
+    router.put('/tasks/:id', async (req, res) => await updateItem(req, res, Model))
+    router.delete('/tasks/:id', async (req, res) => await deleteItem(req, res, Model))
 
 
     // crear una tarea incluyendo todas las FKs NN requeridas
     // y con el autor el usuario logeado
-    // VERSION JODIDA - RESOLVER CON ION - si quiero iniciarla hay que
-    // pasar por parametro el modelo User
-    // router.post('/tasks/projects/:projectId', check, async (req, res) => {
-    //     const { projectId, authorId } = req.params
-    //     const { user_id, ...restData } = req.body
-    //     try {
-    //         const user = await Users.findByPk(user_id)
-    //         if (!user) res.status(404).json({ message: 'Not found' })
-    //         // como sabes que estas asignando author id en user.createTask
-    //         // y no el user id...?
-    //         const task = await user.createTask({
-    //             ...restData,
-    //             project_id: projectId
-
-    //         })
-
-    //         if (!task) res.status(404).json({ message: 'Not found' })
-    //         res.json(task)
-    //     } catch (error) {
-    //         res.status(400).json({ error: error.message })
-    //     }
-    // })
-
-
-
-    
-    // VERSION MANUAL
-    // crear una tarea de un projecto para el usuario logueado
     router.post('/tasks/projects/:projectId',check, async (req, res) => {
         const { projectId, authorId } = req.params
         const {user_id, ...restData} = req.body
@@ -57,6 +22,7 @@ module.exports = (router, Model, check) => {
                 ["project_id"]: projectId,
                 ["author_id"]: user_id,
             })
+
             if (!task) res.status(404).json({ message: 'Not found' })
             res.json(task)
         } catch (error) {
@@ -66,7 +32,7 @@ module.exports = (router, Model, check) => {
 
 
 
-    // todas las tareas que tiene un usuario
+// todas las tareas que tiene un usuario
     // router.get('/tasks/users/:userId', async (req, res) => {
     //     const {userId} = req.params
     //     try {
@@ -85,10 +51,10 @@ module.exports = (router, Model, check) => {
 
     // muestro todas las tareas del user logeado
     router.get('/tasksByUser', check, async (req, res) => {
-        const { user_id } = req.body
+        const {user_id} = req.body
         try {
             const tasks = await Model.findAll({
-                where: { author_id: user_id }
+                where: {user_id}
             })
             if (!tasks) res.status(404).json({ message: 'Not found' })
             res.json(tasks)
@@ -98,27 +64,25 @@ module.exports = (router, Model, check) => {
     })
 
 
-    // todas las tareas que tiene un proyecto 
-    router.get('/tasks/projects/:projectId',check, async (req, res) => {
-        const { projectId } = req.params
-        const {user_id} = req.body
+    // todas las tareas que tiene un proyecto
+    router.get('/tasks/projects/:projectId', async (req, res) => {
+        const {projectId} = req.params
         try {
-            const tasks = await Model.findAll({
+            const projects = await Model.findAll({
                 where: {
-                    ["project_id"]: projectId,
+                    ["project_id"]: projectId
                 }
             })
-            if (!tasks) return res.status(404).json({ message: 'Not found' })
-            const send = tasks.every(task => task.author_id === user_id)
-            if (!send) return res.status(401).json({ message: 'Unauthorized' })
-            res.json(tasks)
+
+            if (!projects) res.status(404).json({ message: 'Not found' })
+            res.json(projects)
         } catch (error) {
             res.status(400).json({ error: error.message })
         }
     })
 
 
-
+    
 
     //NOTA: no tiene mucho sentido
     // todas las tareas que ha inicializado un autor
@@ -159,17 +123,15 @@ module.exports = (router, Model, check) => {
     // })
 
 
-    //  cambiar la fk del user que está realizando la tarea si soy autor de esa tarea
-    router.put('/tasks/:taskId/users/:userId', check, async (req, res) => {
+    // aquí es interesante cambiar la fk del user que está realizando la tarea
+    router.put('/tasks/:taskId/users/:userId', async (req, res) => {
         const { taskId, userId } = req.params
-        const {user_id, ...restData} = req.body
-        console.log(userId + ' soy el pu... pere')
+        const data = req.body
         try {
             const task = await Model.findByPk(taskId)
-            if (!task) return res.status(404).json({ message: 'Not found' })
-            if (user_id != task.author_id) return res.status(401).json({ message: 'Unauthorized' })
+            if (!task) res.status(404).json({ message: 'Not found' })
             await task.update({
-                ...restData,
+                ...data,
                 ["user_id"]: userId
             })
             res.json(task)
@@ -177,15 +139,6 @@ module.exports = (router, Model, check) => {
             res.status(400).json({ error: error.message })
         }
     })
+
+
 }   
-
-    /*
-    de Tasks tengo:
-    - crear una task de un project para el user logueado 
-    - muestro todas las tareas del user logeado
-    - muestro todas las tareas que tiene un proyecto del user logeado
-    - cambio la asignación de una tarea de un usuario a otro
-
-
-    - CRUD super usuario
-    */ 
