@@ -98,7 +98,7 @@ const Tasks = sequelize.define('tasks', {
 // relationships
 
 
-// espinilla de la relacion debil
+
 Users.hasMany(Projects, { foreignKey: 'user_id' })
 Projects.belongsTo(Users, { foreignKey: 'user_id' })
 

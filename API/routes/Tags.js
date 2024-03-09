@@ -13,6 +13,7 @@ module.exports = (router, Model, check) => {
 
 /*
     de Users tengo:
+
     - CRUD super usuario
     sin tener en cuenta que cada tag está asciado a una tarea
     que a su vez tiene un usuario que es el que tiene que estar 

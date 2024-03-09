@@ -39,11 +39,11 @@ const check = async (req, res, next) => {
 }
 
 // all endpoints for each model execution
-usersController(router, Users,check)
+usersController(router, Users,check, jwt, secretKey)
 tagsController(router, Tags,check)
 projectsController(router, Projects,check)
 commentsController(router, Comments,check)
-tasksController(router, Tasks, check)
+tasksController(router, Tasks, check, Tags, Comments)
 NM_task_has_tagController(router, Tasks, Tags,check)
 
 

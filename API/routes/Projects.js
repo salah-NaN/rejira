@@ -29,7 +29,7 @@ module.exports = (router, Model, check) => {
     })
 
     // todos los proyectos que ha creado un usuario
-    router.get('/projects/users/:userId', check, async (req, res) => {
+    router.get('/projectsByUser', check, async (req, res) => {
         const { user_id } = req.body
 
         try {

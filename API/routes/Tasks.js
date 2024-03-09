@@ -10,7 +10,7 @@ const { readItems, readItem, createItem, updateItem, deleteItem } = require('../
 // }
 // CRUD tasks
 
-module.exports = (router, Model, check) => {
+module.exports = (router, Model, check, Tags, Comments) => {
     router.get('/tasks', check,  async (req, res) => await readItems(req, res, Model))
     router.get('/tasks/:id', check,  async (req, res) => await readItem(req, res, Model))
     router.put('/tasks/:id', check,  async (req, res) => await updateItem(req, res, Model))
@@ -97,8 +97,26 @@ module.exports = (router, Model, check) => {
         }
     })
 
+    // bien: todas las tareas que tiene un proyecto
+    // router.get('/tasks/projects/:projectId',check, async (req, res) => {
+    //     const { projectId } = req.params
+    //     const {user_id} = req.body
+    //     try {
+    //         const tasks = await Model.findAll({
+    //             where: {
+    //                 ["project_id"]: projectId,
+    //             }
+    //         })
+    //         if (!tasks) return res.status(404).json({ message: 'Not found' })
+    //         const send = tasks.every(task => task.author_id === user_id)
+    //         if (!send) return res.status(401).json({ message: 'Unauthorized' })
+    //         res.json(tasks)
+    //     } catch (error) {
+    //         res.status(400).json({ error: error.message })
+    //     }
+    // })
 
-    // todas las tareas que tiene un proyecto 
+    // prueba: todas las tareas que tiene un proyecto 
     router.get('/tasks/projects/:projectId',check, async (req, res) => {
         const { projectId } = req.params
         const {user_id} = req.body
@@ -106,11 +124,17 @@ module.exports = (router, Model, check) => {
             const tasks = await Model.findAll({
                 where: {
                     ["project_id"]: projectId,
-                }
+                },
+                include: Tags
+    
             })
             if (!tasks) return res.status(404).json({ message: 'Not found' })
-            const send = tasks.every(task => task.author_id === user_id)
-            if (!send) return res.status(401).json({ message: 'Unauthorized' })
+            // es para revisar si el autor de las tareas es el que está logueado
+            // es un fallo de concepto, hay que hacer otro barrido permitiendo subir
+            // posts cuyo autor es el que está logueado y pero para leer datos
+            // const send = tasks.every(task => task.author_id === user_id)
+            // if (!send) return res.status(401).json({ message: 'Unauthorized' })
+
             res.json(tasks)
         } catch (error) {
             res.status(400).json({ error: error.message })

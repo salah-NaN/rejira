@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 
 
 
-module.exports = (router, Model, check) => {
+module.exports = (router, Model, check, jwt, secretKey) => {
 
 
 
@@ -58,9 +58,9 @@ module.exports = (router, Model, check) => {
             if (!verifyPassword) return res.status(401).json({ message: 'Invalid password' })
             const token = jwt.sign({user_id: user.id, user_name: user.name}, secretKey, {expiresIn: '2h'})
             res.cookie('token', token, {httpOnly: false, maxAge: 7200000})
-            res.json({message: 'Correct login'})
+            res.json({message: 'Correct login', user_id: user.id, name: user.name})
         } catch (error) {
-            res.status(500).json({ error: error.message })
+            res.status(500).json({ error: error.message})
         }
     })
 
