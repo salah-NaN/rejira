@@ -19,9 +19,9 @@ export default function NavBar() {
                     <h1 className="text-2xl font-medium" >Regira</h1>
                     <div className="hidden
                     md:ml-20 md:flex md:gap-10 md:visible">
-                        <p>Docs</p>
-                        <p>Services</p>
-                        <p>About us</p>
+                        <a href="#" >Docs</a>
+                        <a href="#" >Services</a>
+                        <a href="#" >About us</a>
                     </div>
                 </div>
                 
