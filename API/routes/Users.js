@@ -35,12 +35,12 @@ module.exports = (router, Model, check, jwt, secretKey) => {
         try {
             const data = req.body
             if (!req.body.name || !req.body.email || !req.body.password) {
-                res.status(400).json({ message: 'All inputs required' })
+                return res.status(400).json({ message: 'All inputs required' })
             }
             const possibleUser = await Model.findOne({ where: { email: req.body.email } })
-            if (possibleUser) res.status(400).json({ message: 'User registred' })
+            if (possibleUser) return res.status(400).json({ message: 'User registred' })
             const item = await Model.create(data)
-            if (!item) res.status(404).json({ message: 'Not found' })
+            if (!item) return res.status(404).json({ message: 'Not found' })
             res.status(201).json(item)
         } catch (error) {
             res.status(400).json({ error: error.message })

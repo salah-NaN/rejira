@@ -2,7 +2,7 @@
 
 // imports
 const express = require('express')
-const {Users, Projects, Tags, Tasks, Comments} = require('../models')
+const {Users, Projects, Tags, Tasks, Comments, sequelize} = require('../models')
 const jwt = require('jsonwebtoken')
 // aqui se deben importar las rutas de cada uno 
 // de los endpoints separados
@@ -43,7 +43,7 @@ usersController(router, Users,check, jwt, secretKey)
 tagsController(router, Tags,check)
 projectsController(router, Projects,check)
 commentsController(router, Comments,check)
-tasksController(router, Tasks, check, Tags, Comments)
+tasksController(router, Tasks, check, Tags, Comments, Users, sequelize)
 NM_task_has_tagController(router, Tasks, Tags,check)
 
 

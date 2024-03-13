@@ -3,7 +3,7 @@ import close from '../assets/close.svg';
 const URL = 'http://localhost:3000/api'
 
 
-export default function ModalCreateProject({ visible, setVisible, newProject, setNewProject }) {
+export default function ModalCreateProject({ visible, setVisible, newProject, setNewProject, projects, setProjects }) {
 
     // funcs
     const handleOpenModal = (event) => {
@@ -23,8 +23,6 @@ export default function ModalCreateProject({ visible, setVisible, newProject, se
         event.preventDefault();
 
         // fetch to create a project
-        console.log(newProject)
-
         const options = {
             method: 'POST',
             headers: {
@@ -35,7 +33,7 @@ export default function ModalCreateProject({ visible, setVisible, newProject, se
         }
         fetch(URL + '/projectsByUser', options)
             .then(res => res.json())
-            .then(res => console.log(res))
+            .then(res => setProjects([...projects, res]))
             .catch(err => console.log(err))
 
         

@@ -39,7 +39,7 @@ const deleteItem = async (req, res, Model) => {
     const id = req.params.id
     try {
         const item = await Model.findByPk(id)
-        if (!item) res.status(404).json({ message: 'Not found' })
+        if (!item) return res.status(404).json({ message: 'Not found' })
         await item.destroy()
         res.json({ message: 'Item deleted' })
     } catch (error) {

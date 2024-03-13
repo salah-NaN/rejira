@@ -1,3 +1,4 @@
+const { QueryTypes } = require('sequelize')
 const { readItems, readItem, createItem, updateItem, deleteItem } = require('../generics')
 
 // const verify = async (req, res, next, Tasks) => {
@@ -10,7 +11,7 @@ const { readItems, readItem, createItem, updateItem, deleteItem } = require('../
 // }
 // CRUD tasks
 
-module.exports = (router, Model, check, Tags, Comments) => {
+module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
     router.get('/tasks', check,  async (req, res) => await readItems(req, res, Model))
     router.get('/tasks/:id', check,  async (req, res) => await readItem(req, res, Model))
     router.put('/tasks/:id', check,  async (req, res) => await updateItem(req, res, Model))
@@ -50,7 +51,6 @@ module.exports = (router, Model, check, Tags, Comments) => {
     router.post('/tasks/projects/:projectId',check, async (req, res) => {
         const { projectId, authorId } = req.params
         const {user_id, ...restData} = req.body
-        const data = req.body
         try {
             const task = await Model.create({
                 ...restData,
@@ -63,6 +63,22 @@ module.exports = (router, Model, check, Tags, Comments) => {
             res.status(400).json({ error: error.message })
         }
     })
+
+
+
+    // crear promise.All para actualizar el orden de las tareas
+    router.post('/tasks/order',check, async (req, res) => {
+        const {user_id, ...tasks} = req.body
+
+        try {
+            // sequelize.transaction
+            res.json('hey')
+        } catch (error) {
+            res.status(400).json({ error: error.message })
+        }
+    })
+
+
 
 
 
@@ -83,7 +99,7 @@ module.exports = (router, Model, check, Tags, Comments) => {
     //     }
     // })
 
-    // muestro todas las tareas del user logeado
+    // muestro todas las tareas del user logeado - no sirve
     router.get('/tasksByUser', check, async (req, res) => {
         const { user_id } = req.body
         try {
@@ -97,7 +113,7 @@ module.exports = (router, Model, check, Tags, Comments) => {
         }
     })
 
-    // bien: todas las tareas que tiene un proyecto
+    // regular (serviría para un filter): todas las tareas que tiene un proyecto cuyo usuario el el logueado
     // router.get('/tasks/projects/:projectId',check, async (req, res) => {
     //     const { projectId } = req.params
     //     const {user_id} = req.body
@@ -116,25 +132,48 @@ module.exports = (router, Model, check, Tags, Comments) => {
     //     }
     // })
 
-    // prueba: todas las tareas que tiene un proyecto 
+    // DUPLICADO: todas las tareas que tiene un proyecto 
+    // router.get('/tasks/projects/:projectId',check, async (req, res) => {
+    //     const { projectId } = req.params
+    //     try {
+    //         const tasks = await Model.findAll({
+    //             where: {
+    //                 ["project_id"]: projectId,
+    //             },
+    //             include: [Tags, Comments, Users]
+    //             // hay que incluir comentarios tb include: [Tags, Comments]
+    //         })
+    //         if (!tasks) return res.status(404).json({ message: 'Not found' })
+    //         res.json(tasks)
+    //     } catch (error) {
+    //         res.status(400).json({ error: error.message })
+    //     }
+    // })
+    // todas las tareas que tiene un proyecto 
     router.get('/tasks/projects/:projectId',check, async (req, res) => {
         const { projectId } = req.params
-        const {user_id} = req.body
         try {
             const tasks = await Model.findAll({
                 where: {
                     ["project_id"]: projectId,
                 },
-                include: Tags
-    
+                include: [{
+                    model: Tags
+                }, {
+                    model: Users,
+                    as: 'Assigned',
+                    attributes: ['id', 'name']
+                }]
+                // hay que incluir comentarios tb include: [Tags, Comments]
             })
             if (!tasks) return res.status(404).json({ message: 'Not found' })
-            // es para revisar si el autor de las tareas es el que está logueado
-            // es un fallo de concepto, hay que hacer otro barrido permitiendo subir
-            // posts cuyo autor es el que está logueado y pero para leer datos
-            // const send = tasks.every(task => task.author_id === user_id)
-            // if (!send) return res.status(401).json({ message: 'Unauthorized' })
 
+            // sequelize.query(`SELECT tasks.id, tasks.description, tasks.priority, tasks.project_id, tasks.stage, tasks.order, tasks.user_id, tasks.author_id, tasks.title, tasks.createdAt, tasks.updatedAt, users.name FROM tasks inner join users on tasks.user_id = users.id where project_id = ${projectId}`, {type: QueryTypes.SELECT})
+            //     .then(result => {
+            //         // result.map(e => {...e, })
+            //         res.send(result)
+            //     })
+            //     .catch(error => console.log(error))
             res.json(tasks)
         } catch (error) {
             res.status(400).json({ error: error.message })

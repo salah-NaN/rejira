@@ -63,7 +63,7 @@ const Comments = sequelize.define('comments', {
 
 
 const Tags = sequelize.define('tags', {
-    name: {
+    name_tag: {
         type: Sequelize.STRING,
         allowNull: false,
     }
@@ -90,6 +90,11 @@ const Tasks = sequelize.define('tasks', {
     user_id: {
         type: Sequelize.INTEGER,
         allowNull: true
+    },
+    order: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        unique: true
     }
 }, { timestamps: true })
 
@@ -99,26 +104,27 @@ const Tasks = sequelize.define('tasks', {
 
 
 
-Users.hasMany(Projects, { foreignKey: 'user_id' })
+Users.hasMany(Projects, { foreignKey: 'user_id', onDelete: 'CASCADE', hooks: true })
 Projects.belongsTo(Users, { foreignKey: 'user_id' })
 
 Users.hasMany(Comments, { foreignKey: 'user_id' })
 Comments.belongsTo(Users, { foreignKey: 'user_id' })
 
-Tasks.hasMany(Comments, { foreignKey: 'task_id' })
+Tasks.hasMany(Comments, { foreignKey: 'task_id', onDelete: 'CASCADE', hooks: true })
 Comments.belongsTo(Tasks, { foreignKey: 'task_id' })
 
-Tasks.belongsToMany(Tags, { through: 'NM_task_has_tag', foreignKey: 'task_id'})
+Tasks.belongsToMany(Tags, { through: 'NM_task_has_tag', foreignKey: 'task_id', onDelete: 'CASCADE', hooks: true})
+// se tiene que eliminar el tag y la relacion del tag con la tarea 
 Tags.belongsToMany(Tasks, { through: 'NM_task_has_tag', foreignKey: 'tag_id' })
 
-Projects.hasMany(Tasks, { foreignKey: 'project_id' })
+Projects.hasMany(Tasks, { foreignKey: 'project_id', onDelete: 'CASCADE', hooks: true })
 Tasks.belongsTo(Projects, { foreignKey: 'project_id' })
 
-Users.hasMany(Tasks, { foreignKey: 'user_id' })
-Tasks.belongsTo(Users, { foreignKey: 'user_id' })
+Users.hasMany(Tasks, { foreignKey: 'user_id', as: 'Assigned'})
+Tasks.belongsTo(Users, { foreignKey: 'user_id', as: 'Assigned' })
 
-Users.hasMany(Tasks, { foreignKey: 'author_id' })
-Tasks.belongsTo(Users, { foreignKey: 'author_id' })
+Users.hasMany(Tasks, { foreignKey: 'author_id', as: 'Author' })
+Tasks.belongsTo(Users, { foreignKey: 'author_id', as: 'Author' })
 
 // tests
 // console.log(Users)
@@ -160,5 +166,5 @@ module.exports = {
     Projects,
     Comments,
     Tags,
-
+    sequelize
 }
