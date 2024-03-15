@@ -6,16 +6,15 @@ const { readItems, readItem, createItem, updateItem, deleteItem } = require('../
 //     try {
 //         if ()
 //     } catch (error) {
-        
+
 //     }
 // }
 // CRUD tasks
 
 module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
-    router.get('/tasks', check,  async (req, res) => await readItems(req, res, Model))
-    router.get('/tasks/:id', check,  async (req, res) => await readItem(req, res, Model))
-    router.put('/tasks/:id', check,  async (req, res) => await updateItem(req, res, Model))
-    router.delete('/tasks/:id', check,  async (req, res) => await deleteItem(req, res, Model))
+    router.get('/tasks', check, async (req, res) => await readItems(req, res, Model))
+    router.put('/tasks/:id', check, async (req, res) => await updateItem(req, res, Model))
+
 
 
     // crear una tarea incluyendo todas las FKs NN requeridas
@@ -45,15 +44,19 @@ module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
 
 
 
-    
+
     // VERSION MANUAL
     // crear una tarea de un projecto para el usuario logueado
-    router.post('/tasks/projects/:projectId',check, async (req, res) => {
+    router.post('/tasks/projects/:projectId', check, async (req, res) => {
         const { projectId, authorId } = req.params
-        const {user_id, ...restData} = req.body
+        const { user_id, ...restData } = req.body
+
+        console.log(restData)
+
         try {
             const task = await Model.create({
                 ...restData,
+                stage: 'backlog',
                 ["project_id"]: projectId,
                 ["author_id"]: user_id,
             })
@@ -65,19 +68,76 @@ module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
     })
 
 
+    // gettear una tarea por id (puede no estar asociada al user logueado)
+    router.get('/tasks/:id', check, async (req, res) => {
+        const { user_id } = req.body
 
-    // crear promise.All para actualizar el orden de las tareas
-    router.post('/tasks/order',check, async (req, res) => {
-        const {user_id, ...tasks} = req.body
+        const id = req.params.id
 
         try {
-            // sequelize.transaction
-            res.json('hey')
+            const item = await Model.findByPk(id, { include: { model: Users, as: 'Assigned', attributes: ['name', 'email'] }, raw: true, attributes: ['id', 'title', 'description', 'type', 'priority', 'user_id'] })
+            if (!item) return res.status(404).json({ message: 'Not found' })
+            console.log(item)
+            res.json(item)
         } catch (error) {
             res.status(400).json({ error: error.message })
         }
     })
 
+
+    // crear promise.All para actualizar el orden de las tareas
+    router.post('/tasks/order', check, async (req, res) => {
+        const { user_id, ...tasks } = req.body
+
+        try {
+            const tasksToArray = Object.values(tasks)
+
+            sequelize.transaction(async (transaction) => {
+                await Promise.all(tasksToArray.map(async task => {
+                    await Model.update({
+                        order: task.order,
+                        stage: task.stage
+                    }, { where: { id: task.id }, transaction })
+                }))
+            })
+                .then(res => console.log('Actualizado'))
+                .catch(err => console.log(err))
+
+
+        } catch (error) {
+            res.status(400).json({ error: error.message })
+        }
+    })
+
+    // enpoint para actualizar todas las tareas del proyecto
+    router.put('/tasks/:id', check, async (req, res) => {
+        const id = req.params.id
+        const { email, ...restData } = req.body
+        try {
+            const item = await Model.findByPk(id)
+            if (!item) res.status(404).json({ message: 'Not found' })
+            const assignedId = await Users.findOne({ where: { email } })
+            await item.update({ ...restData, user_id: assignedId })
+            res.json(item)
+        } catch (error) {
+            res.status(400).json({ error: error.message })
+        }
+    })
+
+    // endpoint para eliminar cualquier tarea asociada a un proyecto
+    router.delete('/tasks/:task_id/projects/:project_id', check, async (req, res) => {
+        const { user_id } = req.body
+
+        const {task_id, project_id} = req.params
+        try {
+            const item = await Model.findByPk(task_id, {where: {project_id}})
+            if (!item) return res.status(404).json({ message: 'Not found' })
+            await item.destroy()
+            res.json({ message: 'Item deleted' })
+        } catch (error) {
+            res.status(400).json({ error: error.message })
+        }
+    })
 
 
 
@@ -150,7 +210,7 @@ module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
     //     }
     // })
     // todas las tareas que tiene un proyecto 
-    router.get('/tasks/projects/:projectId',check, async (req, res) => {
+    router.get('/tasks/projects/:projectId', check, async (req, res) => {
         const { projectId } = req.params
         try {
             const tasks = await Model.findAll({
@@ -225,7 +285,7 @@ module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
     //  cambiar la fk del user que está realizando la tarea si soy autor de esa tarea
     router.put('/tasks/:taskId/users/:userId', check, async (req, res) => {
         const { taskId, userId } = req.params
-        const {user_id, ...restData} = req.body
+        const { user_id, ...restData } = req.body
         console.log(userId + ' soy el pu... pere')
         try {
             const task = await Model.findByPk(taskId)
@@ -240,15 +300,15 @@ module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
             res.status(400).json({ error: error.message })
         }
     })
-}   
+}
 
-    /*
-    de Tasks tengo:
-    - crear una task de un project para el user logueado 
-    - muestro todas las tareas del user logeado
-    - muestro todas las tareas que tiene un proyecto del user logeado
-    - cambio la asignación de una tarea de un usuario a otro
+/*
+de Tasks tengo:
+- crear una task de un project para el user logueado 
+- muestro todas las tareas del user logeado
+- muestro todas las tareas que tiene un proyecto del user logeado
+- cambio la asignación de una tarea de un usuario a otro
 
 
-    - CRUD super usuario
-    */ 
+- CRUD super usuario
+*/ 

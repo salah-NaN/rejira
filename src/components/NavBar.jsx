@@ -1,11 +1,13 @@
+import { useNavigate } from "react-router-dom"
 import logo from "../assets/logo.svg"
 import Dropdown from "./Dropdown"
 
 export default function NavBar() {
-
+    // const redirect = useNavigate()
     const handleLogout = () => {
-        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
         window.location.href = '/'
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
+        // redirect('/')
     }
     //justify-self-start
     return (
