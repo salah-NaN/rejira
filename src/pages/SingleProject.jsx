@@ -70,7 +70,6 @@ export default function SingleProject() {
             .then(res => {
                 // si el codigo funciona, funciona, no se toca
                 res.sort((a, b) => a.order - b.order)
-                console.log('estas son las tareas: ', res)
                 setTasks(res)
             })
             .catch(err => console.log(err))
@@ -141,7 +140,6 @@ export default function SingleProject() {
         fetch(URL + '/tasks/' + id, options)
             .then(res => res.json())
             .then(res => {
-                console.log(res)
                 setEditable({
                     id: res.id,
                     title: res.title,
@@ -227,7 +225,7 @@ export default function SingleProject() {
                     }
                 </DragDropContext>
             </div>
-            <ModalTask visible={visible} setVisible={setVisible} editable={editable} setEditable={setEditable} project_id={project_id} />
+            <ModalTask visible={visible} setVisible={setVisible} editable={editable} setEditable={setEditable} project_id={project_id} trigger={trigger} setTrigger={setTrigger}/>
         </>
 
     )

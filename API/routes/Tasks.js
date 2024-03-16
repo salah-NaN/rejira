@@ -131,10 +131,11 @@ module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
         }
     })
 
-    // enpoint para actualizar todas las tareas del proyecto
+    // enpoint para actualizar una de las todas todas las tareas del proyecto
     router.put('/tasks/:id', check, async (req, res) => {
         const id = req.params.id
         const { email, ...restData } = req.body
+
         try {
             const item = await Model.findByPk(id)
             if (!item) res.status(404).json({ message: 'Not found' })
