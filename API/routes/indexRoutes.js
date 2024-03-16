@@ -26,7 +26,7 @@ const secretKey = 'esto_es_muy_creativo'
 
 const check = async (req, res, next) => {
     const token = req.cookies?.token
-    if(!token) res.status(401).json({message: 'Unauthorized'})
+    if(!token) return res.status(401).json({message: 'Unauthorized'})
     try {
        const decodedToken = jwt.verify(token, secretKey)
 
@@ -40,9 +40,9 @@ const check = async (req, res, next) => {
 
 // all endpoints for each model execution
 usersController(router, Users,check, jwt, secretKey)
-tagsController(router, Tags,check)
+tagsController(router, Tags ,check, Tasks)
 projectsController(router, Projects,check)
-commentsController(router, Comments,check)
+commentsController(router, Comments,check, Tasks)
 tasksController(router, Tasks, check, Tags, Comments, Users, sequelize)
 NM_task_has_tagController(router, Tasks, Tags,check)
 

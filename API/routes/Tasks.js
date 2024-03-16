@@ -70,12 +70,34 @@ module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
 
     // gettear una tarea por id (puede no estar asociada al user logueado)
     router.get('/tasks/:id', check, async (req, res) => {
-        const { user_id } = req.body
 
         const id = req.params.id
 
         try {
-            const item = await Model.findByPk(id, { include: { model: Users, as: 'Assigned', attributes: ['name', 'email'] }, raw: true, attributes: ['id', 'title', 'description', 'type', 'priority', 'user_id'] })
+            const item = await Model.findByPk(id,
+                {
+                    include: [
+                        {
+                            model: Users,
+                            as: 'Assigned',
+                            attributes: ['name', 'email']
+                        },
+                        {
+                            model: Comments,
+                            include: [
+                                {
+                                    model: Users,
+                                    attributes: ['name', 'email']
+                                }
+                            ]
+                        },
+                        {
+                            model: Tags,
+                        }
+                    ],
+                    attributes: ['id', 'title', 'description', 'type', 'priority', 'user_id']
+
+                })
             if (!item) return res.status(404).json({ message: 'Not found' })
             console.log(item)
             res.json(item)
@@ -126,12 +148,11 @@ module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
 
     // endpoint para eliminar cualquier tarea asociada a un proyecto
     router.delete('/tasks/:task_id/projects/:project_id', check, async (req, res) => {
-        const { user_id } = req.body
-
-        const {task_id, project_id} = req.params
+        const { task_id, project_id } = req.params
         try {
-            const item = await Model.findByPk(task_id, {where: {project_id}})
+            const item = await Model.findByPk(task_id, { where: { project_id } })
             if (!item) return res.status(404).json({ message: 'Not found' })
+            // delete the relationship between tag and task with nm
             await item.destroy()
             res.json({ message: 'Item deleted' })
         } catch (error) {

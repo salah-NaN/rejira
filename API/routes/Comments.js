@@ -1,9 +1,10 @@
+const { where } = require('sequelize')
 const { readItems, readItem, createItem, updateItem, deleteItem } = require('../generics')
 
 
 // CRUD comments
 
-module.exports = (router, Model, check) => {
+module.exports = (router, Model, check, Tasks) => {
     router.get('/comments', check, async (req, res) => await readItems(req, res, Model))
     router.get('/comments/:id', check, async (req, res) => await readItem(req, res, Model))
     router.put('/comments/:id', check, async (req, res) => await updateItem(req, res, Model))
@@ -11,16 +12,18 @@ module.exports = (router, Model, check) => {
 
 
     // crear un comentario que tiene asociado un usuario y una tarea
-    router.post('/comments/tasks/:taskId', check, async (req, res) => {
-        const { taskId } = req.params
+    router.post('/comments/tasks/:task_id/projects/:project_id', check, async (req, res) => {
+        const { task_id, project_id } = req.params
         const { user_id, ...restData } = req.body
         try {
+            const task = await Tasks.findByPk(task_id, { where: { project_id } })
+            if (!task) return res.status(404).json({ message: 'Not found' })
             const item = await Model.create({
                 ...restData,
                 user_id,
-                ["task_id"]: taskId
+                task_id
             })
-            if (!item) res.status(404).json({ message: 'Not found' })
+            if (!item) return res.status(404).json({ message: 'Not found' })
             res.status(201).json(item)
         } catch (error) {
             res.status(400).json({ error: error.message })

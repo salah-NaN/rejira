@@ -5,13 +5,14 @@ const URL = 'http://localhost:3000/api'
 
 
 
-export default function DropAddTask({ isOpen, setIsOpen, id, tasks, setTasks }) {
+export default function DropAddTask({ isOpen, setIsOpen, id, trigger, setTrigger}) {
     const [inputs, setInputs] = useState({title: '', type: 'storie'})
 
 
     const dropdownRef = useRef(null);
 
     // useEffects
+    // to close the mini-dropdown when you click outside it
     useEffect(() => {
         const handleOutsideClick = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -25,6 +26,9 @@ export default function DropAddTask({ isOpen, setIsOpen, id, tasks, setTasks }) 
             document.removeEventListener('mousedown', handleOutsideClick);
         };
     }, []);
+
+
+
 
     // funcs
     const handleInputs = (event) => {
@@ -43,12 +47,13 @@ export default function DropAddTask({ isOpen, setIsOpen, id, tasks, setTasks }) 
         }
         fetch(URL + '/tasks/projects/' + id, options)
             .then(res => res.json())
-            .then(res => {
+            .then(res => {  
                 console.log(res)
-                // setTasks(...tasks, res)
-                // pendient control refreshing
+                setTrigger(!trigger)
             })
             .catch(err => console.log(err))
+
+        
         setInputs({title: '', type: 'storie'})
     }
 

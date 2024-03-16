@@ -12,13 +12,14 @@ const URL = 'http://localhost:3000/api'
 export default function SingleProject() {
     const [tasks, setTasks] = useState([])
     const [parsedtasks, setParsedTasks] = useState([])
-    // para el localstorage
-    const [execute, setExecute] = useState(false)
     // para el dropdown de añadir tarea
     const [isOpen, setIsOpen] = useState(false)
     const [first, setFirst] = useState(true)
+    const [isBegin, setIsBegin] = useState(true)
     const [visible, setVisible] = useState(false)
-    const [editable, setEditable] = useState({ id: -1, title: '', description: '', type: 'storie', priority: 'high', email: '' })
+    const [editable, setEditable] = useState({ id: -1, title: '', description: '', type: 'storie', priority: 'high', email: '', comments: [], tags: [] })
+    const [emptyState, setEmptyState] = useState(false)
+    const [trigger, setTrigger] = useState(false)
 
 
 
@@ -30,7 +31,30 @@ export default function SingleProject() {
 
 
     // useEffects
-
+    
+    useEffect(() => {
+        // solicitar todas las tareas
+        if( !isBegin ) {
+            const options = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            }
+            fetch(URL + `/tasks/projects/${project_id}`, options)
+                .then(res => res.json())
+                .then(res => {
+                    // si el codigo funciona, funciona, no se toca
+                    res.sort((a, b) => a.order - b.order)
+                    setTasks(res)
+                })
+                .catch(err => console.log(err))
+        } else {
+            setIsBegin(false)
+        }
+    }, [trigger])
+    
     // solicitar todas las tareas de ese proyecto
     useEffect(() => {
         // solicitar todas las tareas
@@ -46,12 +70,12 @@ export default function SingleProject() {
             .then(res => {
                 // si el codigo funciona, funciona, no se toca
                 res.sort((a, b) => a.order - b.order)
+                console.log('estas son las tareas: ', res)
                 setTasks(res)
             })
             .catch(err => console.log(err))
-
-
     }, [])
+
 
     // cada vez de cambia el orden de las tareas se hace un fetch para guardar en bd
     useEffect(() => {
@@ -117,14 +141,16 @@ export default function SingleProject() {
         fetch(URL + '/tasks/' + id, options)
             .then(res => res.json())
             .then(res => {
-
+                console.log(res)
                 setEditable({
                     id: res.id,
                     title: res.title,
                     type: res.type,
                     description: res.description === null ? '' : res.description,
-                    email: res.user_id === null ? '' : res["Assigned.email"],
-                    priority: res.priority === null ? 'high' : res.priority
+                    email: !res.Assigned ? '' : res.Assigned.email,
+                    priority: res.priority === null ? 'high' : res.priority,
+                    comments: res.comments,
+                    tags: res.tags
                 })
             })
             .catch(err => console.log(err))
@@ -189,7 +215,7 @@ export default function SingleProject() {
                                             </div>
 
 
-                                            <DropAddTask tasks={tasks} setTasks={setTasks} isOpen={isOpen} setIsOpen={setIsOpen} id={project_id} />
+                                            <DropAddTask trigger={trigger} setTrigger={setTrigger} isOpen={isOpen} setIsOpen={setIsOpen} id={project_id} />
                                         </div>
 
                                     )
@@ -201,7 +227,7 @@ export default function SingleProject() {
                     }
                 </DragDropContext>
             </div>
-            <ModalTask visible={visible} setVisible={setVisible} editable={editable} setEditable={setEditable} project_id={project_id}/>
+            <ModalTask visible={visible} setVisible={setVisible} editable={editable} setEditable={setEditable} project_id={project_id} />
         </>
 
     )
