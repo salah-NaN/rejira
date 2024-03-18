@@ -6,6 +6,7 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd"
 import plus from '../assets/add.png';
 import DropAddTask from "../components/DropAddTask";
 import ModalTask from "../components/ModalTask";
+import Back from "../components/Back";
 const URL = 'http://localhost:3000/api'
 
 
@@ -158,7 +159,8 @@ export default function SingleProject() {
     // tailwind stuff: bg-red-500/70 bg-orange-500/70  bg-gray-500/70
     return (
         <>
-            <div className="px-5 flex gap-7 overflow-x-scroll h-lvh">
+        <Back/>
+            <div className="px-8 flex gap-7 overflow-x-scroll h-lvh">
                 <DragDropContext className="flex gap-7 overflow-x-scroll"
                     onDragEnd={handleDragEnd}>
                     {
@@ -193,7 +195,7 @@ export default function SingleProject() {
                                                                     {task.tags.map((tag, index) => <div key={index} className="inline-block w-fit ml-2 mt-1 px-2 rounded-full bg-[#e5e5e5] text-[#444444] shadow-sm font-sm  truncate">{'#' + tag.name_tag}</div>)}
                                                                 </div>
                                                                 <button onClick={(event) => handleOpenModalAndEdit(event, task.id)}
-                                                                    className=" w-fit px-2  text-[13px] font-semibold text-[#dadada] hover:border-[#ebebeb] hover:text-[#ebebeb] transition duration-200" >Edit</button>
+                                                                    className=" w-fit px-2  text-[13px] font-semibold text-[#dadada]  hover:text-[#ebebeb] transition duration-200" >Edit</button>
                                                             </li>
                                                         )}
                                                     </Draggable>

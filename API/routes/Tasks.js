@@ -13,7 +13,7 @@ const { readItems, readItem, createItem, updateItem, deleteItem } = require('../
 
 module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
     router.get('/tasks', check, async (req, res) => await readItems(req, res, Model))
-    router.put('/tasks/:id', check, async (req, res) => await updateItem(req, res, Model))
+    // router.put('/tasks/:id', check, async (req, res) => await updateItem(req, res, Model))
 
 
 
@@ -131,16 +131,17 @@ module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
         }
     })
 
-    // enpoint para actualizar una de las todas todas las tareas del proyecto
+    // enpoint para actualizar una de todas las tareas del proyecto
     router.put('/tasks/:id', check, async (req, res) => {
         const id = req.params.id
         const { email, ...restData } = req.body
 
         try {
             const item = await Model.findByPk(id)
-            if (!item) res.status(404).json({ message: 'Not found' })
+            if (!item) return res.status(404).json({ message: 'Not found' })
             const assignedId = await Users.findOne({ where: { email } })
-            await item.update({ ...restData, user_id: assignedId })
+            console.log(assignedId)
+            await item.update({ ...restData, user_id: assignedId.id })
             res.json(item)
         } catch (error) {
             res.status(400).json({ error: error.message })

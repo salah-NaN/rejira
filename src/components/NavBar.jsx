@@ -16,7 +16,7 @@ export default function NavBar() {
 
     // funcs
     const handleRedirect = () => {
-        if(document.cookie.includes('token')) redirect('/projects')
+        if (document.cookie.includes('token')) redirect('/projects')
     }
     //justify-self-start
     return (
@@ -26,9 +26,11 @@ export default function NavBar() {
             md:pl-20 md:pr-16
             lg:pl-24'>
                 <div className="flex justify-center items-center gap-4">
-                    <img className="size-10" src={logo}></img>
-                    <h1 onClick={handleRedirect}
-                        className="text-2xl font-medium cursor-pointer" >Regira</h1>
+                    <div className="flex justify-center items-center gap-4 cursor-pointer" onClick={handleRedirect}>
+                        <img className="size-10" src={logo}></img>
+                        <h1
+                            className="text-2xl font-normal" >Regira</h1>
+                    </div>
 
                     <div className="hidden
                     md:ml-20 md:flex md:gap-10 md:visible">

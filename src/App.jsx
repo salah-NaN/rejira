@@ -37,9 +37,9 @@ function App() {
   // funcs
   // to log out
   function handleLogout() {
-    window.location.href = '/'
-    setLogged(null)
     document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
+    setLogged(null)
+    window.location.href = '/'
   }
 
   const data = {
@@ -50,7 +50,7 @@ function App() {
 
   // execution zone
   // no funciona bien
-  window.history.replaceState(null, null, "/");
+  // window.history.replaceState(null, null, "/");
 
 
 

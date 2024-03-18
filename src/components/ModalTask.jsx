@@ -74,7 +74,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                 'Content-Type': 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify(restEditable)
+            body: JSON.stringify({...restEditable, email})
         }
         fetch(URL + '/tasks/' + id, options)
             .then(res => res.json())
@@ -129,8 +129,10 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
             .then(res => {
                 console.log(res)
                 setUpdateTagComment(!updateTagComment)
+                setTrigger(!trigger)
             })
             .catch(err => console.log(err))
+            setTagInput('')
     }
 
     const handleDeleteTag = (event, id) => {
@@ -180,6 +182,8 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                 setUpdateTagComment(!updateTagComment)
             })
             .catch(err => console.log(err))
+
+            setCommentInput({ commentTitle: '', comment: '' })
     }
 
     return (
@@ -188,8 +192,8 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                 <div className={` ${visible ? 'fixed' : 'hidden'} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50
                 w-10/12 h-9/12 bg-[#fafafa] shadow py-6 px-8
                 sm:w-3/5
-                md:w-2/5
-                lg:w-1/3`}>
+                md:w-6/12
+                lg:w-5/12`}>
                     <div className="flex justify-between items-center ">
                         <h3 className="text-2xl font-semibold " >Edit task</h3>
                         <img onClick={() => setVisible(false)}
@@ -251,7 +255,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                                  key={comment.id}>
                                     <h5 className="font-medium text-[15px]">{comment.user.name}</h5>
                                     <h6 className=" text-[14px]" >{comment.title}</h6>
-                                    <p className=" text-[13px]" >{comment.comment}</p>
+                                    <p className="font-light text-[13px]" >{comment.comment}</p>
                                 </div>
                             ))}
                         </div>
