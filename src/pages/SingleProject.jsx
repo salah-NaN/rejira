@@ -17,8 +17,10 @@ export default function SingleProject() {
     const [isOpen, setIsOpen] = useState(false)
     const [first, setFirst] = useState(true)
     const [isBegin, setIsBegin] = useState(true)
+    const [isBegin1, setIsBegin1] = useState(true)
+    const [flag, setFlag] = useState(true)
     const [visible, setVisible] = useState(false)
-    const [editable, setEditable] = useState({ id: -1, title: '', description: '', type: 'storie', priority: 'high', email: '', comments: [], tags: [] })
+    const [editable, setEditable] = useState({ id: -1, title: '', description: '', type: 'storie', priority: 'medium', email: '', comments: [], tags: [] })
     const [emptyState, setEmptyState] = useState(false)
     const [trigger, setTrigger] = useState(false)
 
@@ -33,8 +35,8 @@ export default function SingleProject() {
 
     // useEffects
     
+    // actualizar al instante los tags y comments
     useEffect(() => {
-        // solicitar todas las tareas
         if( !isBegin ) {
             const options = {
                 method: 'GET',
@@ -79,25 +81,31 @@ export default function SingleProject() {
 
     // cada vez de cambia el orden de las tareas se hace un fetch para guardar en bd
     useEffect(() => {
-
         // las tareas actualizadas con su orden y su stage
-        const beforeSave = tasks.map((task, index) => {
-            return { id: task.id, stage: task.stage, order: index }
-        })
-
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify(beforeSave)
+        if(!isBegin1){
+            const beforeSave = tasks.map((task, index) => {
+                return { id: task.id, stage: task.stage, order: index }
+            })
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify(beforeSave)
+            }
+            fetch(URL + '/tasks/order', options)
+                .then(res => res.json())
+                .then(res => console.log(res))
+                .catch(err => console.log(err))
+        } else {
+            setIsBegin1(!isBegin1)
         }
-        fetch(URL + '/tasks/order', options)
-            .then(res => res.json())
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
-    }, [tasks])
+        
+
+        
+    }, [flag])
+
 
 
 
@@ -115,6 +123,8 @@ export default function SingleProject() {
             const [draggedTask] = allowed.splice(source.index, 1)
             allowed.splice(destination.index, 0, draggedTask)
             setTasks([...notAllowed, ...allowed])
+            // new lines
+            setFlag(!flag)
         } else {
             const origin = clone.filter(task => task.stage == source.droppableId)
             const dest = clone.filter(task => task.stage === destination.droppableId)
@@ -123,6 +133,8 @@ export default function SingleProject() {
             draggableTask.stage = destination.droppableId
             dest.push(draggableTask)
             setTasks([...rest, ...origin, ...dest])
+            // new lines
+            setFlag(!flag)
         }
     }
 
@@ -147,7 +159,7 @@ export default function SingleProject() {
                     type: res.type,
                     description: res.description === null ? '' : res.description,
                     email: !res.Assigned ? '' : res.Assigned.email,
-                    priority: res.priority === null ? 'high' : res.priority,
+                    priority: res.priority === null ? 'low' : res.priority,
                     comments: res.comments,
                     tags: res.tags
                 })
@@ -171,7 +183,8 @@ export default function SingleProject() {
                                 <Droppable key={table} droppableId={table}>
                                     {(provided) => (
                                         <ul
-                                            className={`pt-4 ${table === 'backlog' ? 'border-r-2 border-l-2 pb-1 border-r-gray-300 border-l-gray-300' : 'border-b-2 border-r-2 border-l-2 border-b-gray-300 border-r-gray-300 border-l-gray-300'} min-w-[260px] h-fit bg-[#5593ff]`}
+                                            className={`pt-4 ${table === 'backlog' ? 'border-r-2 border-l-2 pb-1 border-r-gray-300 border-l-gray-300' : 'border-b-2 border-r-2 border-l-2 border-b-gray-300 border-r-gray-300 border-l-gray-300'} min-w-[260px] ${table === 'backlog' ? 'min-h-[442px]': 'min-h-[500px]'} h-fit bg-[#5593ff]
+                                            ${table === 'backlog' ? 'lg:min-h-[542px]': 'lg:min-h-[600px]'}`}
                                             {...provided.droppableProps} ref={provided.innerRef}>
                                             {tasks
                                                 .filter(task => task.stage === table)

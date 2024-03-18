@@ -13,12 +13,15 @@ module.exports = (router, Model, check) => {
     router.get('/projectsByUser', check, async (req, res) => {
         const { user_id } = req.body
 
+        console.log('ENDPOINT PROYECTO RECIBE DATOS: user: ', user_id)
+
         try {
             const projects = await Model.findAll({
                 where: {
                     user_id
                 }
             })
+            console.log('PROJECTES ENVIATS: ' + projects.length)
             if (!projects) return res.status(404).json({ message: 'Not found' })
             res.json(projects)
         } catch (error) {

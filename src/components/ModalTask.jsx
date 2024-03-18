@@ -115,6 +115,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
     const handleAddTag = () => {
         const { id } = editable
         const objTag = { name_tag: tagInput }
+        
         // fetch to add a tag associated to a task
         const options = {
             method: 'POST',
@@ -139,7 +140,6 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
         event.preventDefault()
         const { id: task_id } = editable
 
-
         // fetch to delete the a tag
         const options = {
             method: 'DELETE',
@@ -153,6 +153,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
             .then(res => {
                 console.log(res)
                 setUpdateTagComment(!updateTagComment)
+                setTrigger(!trigger)
             })
             .catch(err => console.log(err))
 
@@ -221,9 +222,9 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                                 <option value='task' >Task</option>
                             </select>
                             <select value={editable.priority} name="priority" onChange={handleInputs} className="bg-[#fafafa] text-[#131313] font-[14px]">
-                                <option value='high' >High</option>
-                                <option value='medium' >Medium</option>
                                 <option value='low' >Low</option>
+                                <option value='medium' >Medium</option>
+                                <option value='high' >High</option>
                             </select>
                             <input value={editable.email} className="w-full py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
                                 onChange={handleInputs}
@@ -251,7 +252,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                         {/* maquetar los comentarios */}
                         <div className={` flex-none overflow-auto h-32 border border-[#bdd5ff]`}>
                             {editable.comments.map(comment => (
-                                <div className="mx-4 my-2 py-1 px-2 flex flex-col w-fit rounded-lg bg-[#88b4ff]"
+                                <div className="mx-4 my-2 py-1.5 px-2.5 flex flex-col w-fit rounded-lg bg-[#88b4ff]"
                                  key={comment.id}>
                                     <h5 className="font-medium text-[15px]">{comment.user.name}</h5>
                                     <h6 className=" text-[14px]" >{comment.title}</h6>

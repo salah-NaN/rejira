@@ -22,6 +22,8 @@ module.exports = (router, Model, check, Tasks) => {
         try {
             const item = await Tasks.findByPk(task_id, { where: { project_id } })
             if (!item) return res.status(404).json({ message: 'Not found' })
+            const tagExists = await Model.findOne({ where: {name_tag: data.name_tag } })
+            if (tagExists) return res.status(404).json({ message: 'Already exists' })
             const tag = await Model.create(data)
             if (!tag) return res.status(404).json({ message: 'Not created' })
             await tag.addTasks(item)
@@ -40,10 +42,10 @@ module.exports = (router, Model, check, Tasks) => {
             if (!item) return res.status(404).json({ message: 'Not found' })
             const tag = await Model.findByPk(tag_id)
 
-            if(!tag) return res.status(404).json({ message: 'Not found' })
+            if (!tag) return res.status(404).json({ message: 'Not found' })
             await tag.removeTasks(item)
             await tag.destroy()
-            
+
             res.json({ message: 'Item deleted' })
         } catch (error) {
             res.status(400).json({ error: error.message })

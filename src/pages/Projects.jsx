@@ -8,7 +8,6 @@ import Context from "../util/Context";
 
 const URL = 'http://localhost:3000/api'
 
-
 export default function Home() {
     const [projects, setProjects] = useState([])
     const [projectData, setProjectData] = useState({})
@@ -28,7 +27,7 @@ export default function Home() {
     // useEffects
     useEffect(() => {
 
-        setTimeout(() => {
+        // setTimeout(() => {
 
             const options = {
                 method: 'GET',
@@ -39,10 +38,13 @@ export default function Home() {
             }
             fetch(URL + '/projectsByUser', options)
                 .then(res => res.json())
-                .then(res => setProjects(res))
+                .then(res => {
+                    console.log(res)
+                    setProjects(res)
+                })
                 .catch(err => console.log(err))
 
-        }, 300);
+        // }, 300);
     }, [])
 
 

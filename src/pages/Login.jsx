@@ -59,8 +59,12 @@ const Login = () => {
         setInputs(initial)
     }
 
+    const handleSignUp = () => {
+        redirect('/signup')
+    }
+
     // execution zone
-    window.history.replaceState(null, null, "/");
+    // window.history.replaceState(null, null, "/");
 
 
     return (
@@ -81,7 +85,12 @@ const Login = () => {
                     <input className="mb-4 py-1 pl-2 border-b border-gray-200 focus:outline-none focus:border-b-[#3b82f6] transition duration-200 text-[15px]"
                         type='password' name="password" onChange={handleForm} value={inputs["password"]} ></input>
                     {/* change to link and redirect */}
-                    <button className=" w-fit self-end text-[12px] mb-5 text-gray-700 hover:text-gray-400">Forgot password?</button>
+                    <div className="flex justify-between items-center">
+                        <button type="button"
+                            onClick={handleSignUp}
+                            className=" w-fit self-end text-[12px] mb-5 text-gray-700 hover:text-gray-400 transition duration-200">Create account</button>
+                        <button className=" w-fit self-end text-[12px] mb-5 text-gray-700 hover:text-gray-400 transition duration-200">Forgot password?</button>
+                    </div>
                     <button className="py-1 px-3 bg-[#3b82f6] text-white hover:bg-[#3b82f6]/90 transition duration-200">Submit</button>
                 </form>
 

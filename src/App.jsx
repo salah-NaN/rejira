@@ -1,5 +1,5 @@
 
-import { Outlet, Link, useNavigate } from 'react-router-dom'
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import Context from './util/Context'
 import './App.css'
 import NavBar from './components/NavBar'
@@ -9,6 +9,10 @@ const URL = 'http://localhost:3000/api'
 
 function App() {
   const [logged, setLogged] = useState(null)
+
+  // constants
+  const location = useLocation()
+
 
   // useEffects
   useEffect(() => {
@@ -34,12 +38,25 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    // ask if actual location is '/' and cookie isnt set
+    if (location.pathname === '/') {
+      document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
+      setLogged(null)
+      window.history.replaceState(null, null, "/");
+
+      // falta meter el useHistory para limpiar el historial cuando el pathname
+      // es login
+    }
+  }, [location])
+
   // funcs
   // to log out
   function handleLogout() {
+    window.location.href = '/'
     document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
     setLogged(null)
-    window.location.href = '/'
+    window.history.replaceState(null, null, "/");
   }
 
   const data = {
@@ -50,7 +67,6 @@ function App() {
 
   // execution zone
   // no funciona bien
-  // window.history.replaceState(null, null, "/");
 
 
 

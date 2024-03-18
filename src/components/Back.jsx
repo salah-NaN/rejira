@@ -6,8 +6,9 @@ export default function Back({ func }) {
 
     const redirect = useNavigate()
     return (
-        <div className=" w-full ml-4 my-4">
-            <img onClick={() => redirect('/projects')} className='size-7 cursor-pointer'
+        <div className=" w-full ml-7 my-2.5">
+            <img onClick={() => redirect('/projects')} className='size-5 cursor-pointer
+            sm:size-6'
                 src={left}></img>
         </div>
     )
