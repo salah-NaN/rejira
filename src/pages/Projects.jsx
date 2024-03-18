@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import plus from '../assets/add.png';
 import ModalCreateProject from "../components/ModalCreateProject";
 import ModalEditProject from "../components/ModalEditProject";
+import Context from "../util/Context";
 
 
 const URL = 'http://localhost:3000/api'
@@ -22,6 +23,7 @@ export default function Home() {
 
     // constants
     const redirect = useNavigate()
+    const {logged} = useContext(Context)
 
     // useEffects
     useEffect(() => {
@@ -39,6 +41,7 @@ export default function Home() {
                 .then(res => res.json())
                 .then(res => setProjects(res))
                 .catch(err => console.log(err))
+
         }, 300);
     }, [])
 

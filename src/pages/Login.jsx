@@ -1,5 +1,7 @@
-import { useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import Context from "../util/Context"
+
 const URL = 'http://localhost:3000/api'
 
 const initial = {
@@ -11,6 +13,8 @@ const initial = {
 const Login = () => {
     const [inputs, setInputs] = useState(initial)
 
+
+    const { payaso, loggued, setLogged, handleLogout } = useContext(Context)
 
     // constants
     const redirect = useNavigate()
@@ -28,7 +32,7 @@ const Login = () => {
     // making a login request 
     const handleSubmit = (event) => {
         event.preventDefault()
-        console.log(inputs)
+
         const options = {
             method: 'POST',
             headers: {
@@ -39,10 +43,18 @@ const Login = () => {
         }
         fetch(URL + '/login', options)
             .then(res => res.json())
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
-
-        redirect('/projects')
+            .then(res => {
+                if(res.error){
+                    handleLogout()
+                } else {
+                    redirect('/projects')
+                    setLogged(res)
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                handleLogout()
+            })
         // to reset the form values
         setInputs(initial)
     }

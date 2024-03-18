@@ -52,15 +52,27 @@ module.exports = (router, Model, check, jwt, secretKey) => {
         try {
             const { email, password } = req.body
             const user = await Model.findOne({ where: { email } })
-            if (!user) return res.status(404).json({ message: 'Not found' })
+            if (!user) return res.status(404).json({ error: 'Not found' })
             const verifyPassword = await bcrypt.compare(password, user.password)
             // error contraseña inválida
-            if (!verifyPassword) return res.status(401).json({ message: 'Invalid password' })
-            const token = jwt.sign({user_id: user.id, user_name: user.name}, secretKey, {expiresIn: '2h'})
-            res.cookie('token', token, {httpOnly: false, maxAge: 7200000})
-            res.json({message: 'Correct login', user_id: user.id, name: user.name})
+            if (!verifyPassword) return res.status(401).json({ error: 'Invalid password' })
+            const token = jwt.sign({ user_id: user.id, user_name: user.name }, secretKey, { expiresIn: '2h' })
+            res.cookie('token', token, { httpOnly: false, maxAge: 7200000 })
+            res.json({ user_id: user.id, name: user.name })
         } catch (error) {
-            res.status(500).json({ error: error.message})
+            res.status(500).json({ error: error.message })
+        }
+    })
+
+    // refresh to check user is valid
+    router.get('/refresh', check, async (req, res) => {
+        try {
+            const { user_id } = req.body
+            const user = await Model.findByPk(user_id)
+            if (!user) return res.status(404).json({ message: 'Not found' })
+            res.json({ user_id: user.id, name: user.name })
+        } catch (error) {
+            res.status(500).json({ error: error.message })
         }
     })
 
@@ -73,6 +85,6 @@ module.exports = (router, Model, check, jwt, secretKey) => {
 
 
     - CRUD super usuario
-    */ 
-    
+    */
+
 }

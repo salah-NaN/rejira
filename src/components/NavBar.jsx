@@ -1,13 +1,22 @@
 import { useNavigate } from "react-router-dom"
 import logo from "../assets/logo.svg"
 import Dropdown from "./Dropdown"
+import { useContext, useEffect } from "react"
+import Context from "../util/Context"
+
+
 
 export default function NavBar() {
-    // const redirect = useNavigate()
-    const handleLogout = () => {
-        window.location.href = '/'
-        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
-        // redirect('/')
+    const { logged, setLogged, handleLogout } = useContext(Context)
+
+    // constants
+    const redirect = useNavigate()
+
+
+
+    // funcs
+    const handleRedirect = () => {
+        if(document.cookie.includes('token')) redirect('/projects')
     }
     //justify-self-start
     return (
@@ -18,7 +27,9 @@ export default function NavBar() {
             lg:pl-24'>
                 <div className="flex justify-center items-center gap-4">
                     <img className="size-10" src={logo}></img>
-                    <h1 className="text-2xl font-medium" >Regira</h1>
+                    <h1 onClick={handleRedirect}
+                        className="text-2xl font-medium cursor-pointer" >Regira</h1>
+
                     <div className="hidden
                     md:ml-20 md:flex md:gap-10 md:visible">
                         <a href="#" >Docs</a>
@@ -26,8 +37,14 @@ export default function NavBar() {
                         <a href="#" >About us</a>
                     </div>
                 </div>
-                
-                <Dropdown func={handleLogout} />
+
+                {
+                    logged
+                        ?
+                        <Dropdown func={handleLogout} />
+                        :
+                        null
+                }
             </nav>
         </>
 

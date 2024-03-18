@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import close from '../assets/close.svg';
+import tag from '../assets/tag.svg';
 const URL = 'http://localhost:3000/api'
 
 
@@ -229,55 +230,58 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                         {/* maquetar los tags */}
                         <div className="flex flex-col">
                             {/* button añadir tag */}
-                            <div className="w-full my-3 flex justify-between items-center">
-                                <input className=" w-1/2 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
+                            <div className="w-full my-3 flex gap-3 items-center">
+                                <input className=" flex-grow w-1/2 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
                                     value={tagInput}
                                     onChange={(event) => setTagInput(event.target.value)}
                                     placeholder="Add a tag..."
                                     name="name_tag"
                                 ></input>
-                                <button className="  px-3 py-0.5 border-2 border-[#3b82f6] text-[#3b82f6] text-[13px] "
+                                <button className="  px-3 py-1 border-2 border-[#3b82f6] text-[#3b82f6] text-[13px] "
                                     onClick={handleAddTag} type="button" >Add</button>
-                            <img onClick={() => setTagsVisible(true)}
-                                className="size-10 cursor-pointer" src={close} ></img>
+                                <img onClick={() => setTagsVisible(true)}
+                                    className="size-6 cursor-pointer" src={tag} ></img>
                             </div>
                         </div>
 
                         {/* maquetar los comentarios */}
-                        <div className={` flex-none overflow-auto h-28 bg-amber-500`}>
+                        <div className={` flex-none overflow-auto h-32 border border-[#bdd5ff]`}>
                             {editable.comments.map(comment => (
-                                <div key={comment.id}>
-                                    <h5>{comment.user.name}</h5>
-                                    <h6>{comment.title}</h6>
-                                    <p>{comment.comment}</p>
+                                <div className="mx-4 my-2 py-1 px-2 flex flex-col w-fit rounded-lg bg-[#88b4ff]"
+                                 key={comment.id}>
+                                    <h5 className="font-medium text-[15px]">{comment.user.name}</h5>
+                                    <h6 className=" text-[14px]" >{comment.title}</h6>
+                                    <p className=" text-[13px]" >{comment.comment}</p>
                                 </div>
                             ))}
                         </div>
                         {/* añadir comentario */}
-                        <div>
-                            <input className="mt-3 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
+                        <div className="">
+                            <input className="w-full mt-3 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
                                 value={commentInput.commentTitle}
                                 onChange={handleCommentInputs}
                                 placeholder="Title..."
                                 name="commentTitle"
                             ></input>
-                            <input className="mt-3 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
-                                value={commentInput.comment}
-                                onChange={handleCommentInputs}
-                                placeholder="Comment..."
-                                name="comment"
-                            ></input>
-                            <button type="button"
-                                onClick={handleAddComment}>Add</button>
+                            <div className="mt-3 flex justify-between items-center gap-3" >
+                                <input className="flex-grow py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
+                                    value={commentInput.comment}
+                                    onChange={handleCommentInputs}
+                                    placeholder="Comment..."
+                                    name="comment"
+                                ></input>
+                                <button className="  px-3 py-1 border-2 border-[#3b82f6] text-[#3b82f6] text-[13px] "
+                                    onClick={handleAddComment} type="button" >Add</button>
+                            </div>
                         </div>
 
                         <div className="flex justify-between mt-5">
                             <button type="button"
                                 onClick={() => setDeleteVisible(true)}
-                                className="w-fit  px-6 py-1 text-white  bg-red-500/90 hover:bg-[#ff5353]/90 transition duration-200">
+                                className="w-fit  px-6 py-1 text-white  bg-red-500/90 hover:bg-[#ff5353]/90 transition duration-200 shadow">
                                 Drop
                             </button>
-                            <button className="w-fit px-6 py-1 text-white bg-[#3b82f6] hover:bg-[#3b82f6]/90 transition duration-200"
+                            <button className="w-fit px-6 py-1 text-white bg-[#3b82f6] hover:bg-[#3b82f6]/90 transition duration-200 shadow"
                                 onChange={handleOpenModal}>
                                 Save
                             </button>
@@ -318,22 +322,6 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
 
                                     </div>)}
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    {/* comments */}
-                    <div className={` ${deleteVisible ? 'fixed' : 'hidden'} top-0 left-0 overflow-y-auto overflow-x-hidden w-full h-full  bg-black bg-opacity-20 `}>
-                        <div className={`${deleteVisible ? 'fixed' : 'hidden'}  top-1/2 left-1/2 w-10/12 h-24 bg-[#fafafa] -translate-x-1/2 -translate-y-1/2 z-70`} >
-                            <h3 className="mt-3 text-center text-[15px] font-medium">You want to drop the task?</h3>
-                            <div className="mt-4 flex justify-evenly" >
-                                <button type="button"
-                                    onClick={() => setDeleteVisible(false)}
-                                    className="w-fit px-6 py-1 text-white bg-[#aeaeae] hover:bg-[#aeaeae]/90 transition duration-200"
-                                >Cancel</button>
-                                <button type="button"
-                                    onClick={handleDropTask}
-                                    className="w-fit  px-6 py-1 text-white  bg-red-500/90 hover:bg-[#ff5353]/90 transition duration-200"
-                                >Confirm</button>
                             </div>
                         </div>
                     </div>
