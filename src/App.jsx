@@ -1,5 +1,5 @@
 
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
+import { Outlet, Link, useNavigate, useLocation, redirect } from 'react-router-dom'
 import Context from './util/Context'
 import './App.css'
 import NavBar from './components/NavBar'
@@ -12,7 +12,7 @@ function App() {
 
   // constants
   const location = useLocation()
-
+  const redirect = useNavigate('/')
 
   // useEffects
   useEffect(() => {
@@ -44,9 +44,8 @@ function App() {
       document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
       setLogged(null)
       window.history.replaceState(null, null, "/");
-
-      // falta meter el useHistory para limpiar el historial cuando el pathname
-      // es login
+      // BUG es un error en la consola y no deja hacer login
+      // redirect("/")
     }
   }, [location])
 

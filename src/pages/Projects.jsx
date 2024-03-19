@@ -27,8 +27,6 @@ export default function Home() {
     // useEffects
     useEffect(() => {
 
-        // setTimeout(() => {
-
             const options = {
                 method: 'GET',
                 headers: {
@@ -43,8 +41,6 @@ export default function Home() {
                     setProjects(res)
                 })
                 .catch(err => console.log(err))
-
-        // }, 300);
     }, [])
 
 

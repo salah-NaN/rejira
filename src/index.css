@@ -11,5 +11,7 @@
 
 body {
     background-color: #fafafa;
+    /* background-image: url('./assets/fondo.jpg');
+    background-size: cover; */
     font-family: Mona;
 }

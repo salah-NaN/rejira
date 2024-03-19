@@ -14,7 +14,7 @@ const Login = () => {
     const [inputs, setInputs] = useState(initial)
 
 
-    const { payaso, loggued, setLogged, handleLogout } = useContext(Context)
+    const { loggued, setLogged, handleLogout } = useContext(Context)
 
     // constants
     const redirect = useNavigate()

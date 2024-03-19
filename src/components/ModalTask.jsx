@@ -12,8 +12,41 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
     const [commentInput, setCommentInput] = useState({ commentTitle: '', comment: '' })
     const [updateTagComment, setUpdateTagComment] = useState(false)
     const [first, setFirst] = useState(true)
+    // suggestions for autocompleted tag feature 
+    const [suggestions, setSuggestions] = useState([])
+    const [flagVisible, setFlagVisible] = useState(false)
+
 
     // useEffects
+
+    // getting all tags from database
+    useEffect(() => {
+        // fetch to do that
+        const options = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+        }
+        fetch(URL + '/tags', options)
+            .then(res => res.json())
+            .then(res => {
+                setSuggestions(res)
+            })
+            .catch(err => console.log(err))
+    }, [])
+
+    // para que cada vez de cambia el tagInputs que se haga un set del flagVisible
+    useEffect(() => {
+        if (tagInput) {
+            setFlagVisible(true)
+        } else {
+            setFlagVisible(false)
+        }
+    }, [tagInput])
+
+    // para que dentro del modal se refresque la info
     useEffect(() => {
         if (!first) {
             const { id } = editable
@@ -49,6 +82,8 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
 
 
 
+
+
     // funcs
     const handleOpenModal = (event) => {
         setVisible(!visible)
@@ -63,8 +98,9 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
 
     const handleSubmitEdit = (event) => {
         event.preventDefault();
-        console.log(editable)
+        console.log('Y este el editable: ' + editable)
         const { id, email, ...restEditable } = editable
+        console.log('este es el' + id)
         console.log(email)
         console.log(restEditable)
         // fetch to update a a task
@@ -74,7 +110,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                 'Content-Type': 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify({...restEditable, email})
+            body: JSON.stringify({ ...restEditable, email })
         }
         fetch(URL + '/tasks/' + id, options)
             .then(res => res.json())
@@ -112,10 +148,24 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
             .catch(err => console.log(err))
     }
 
+    const handleChangeTags = event => {
+        const input = event.target.value
+
+        console.log('este son las sugerencias: ' + suggestions)
+        // se va actualizando la lista de sugeridos dependiendo del input
+
+        console.log('este es el filtrado: ' + filtered)
+
+        // se cambia el valor
+        setTagInput(input)
+        // cada vez que cambia el input hago un set de las sugeridas filtradas
+        // setSuggestions(filtered)
+    }
+
     const handleAddTag = () => {
         const { id } = editable
         const objTag = { name_tag: tagInput }
-        
+
         // fetch to add a tag associated to a task
         const options = {
             method: 'POST',
@@ -133,7 +183,9 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                 setTrigger(!trigger)
             })
             .catch(err => console.log(err))
-            setTagInput('')
+
+        // clear input
+        setTagInput('')
     }
 
     const handleDeleteTag = (event, id) => {
@@ -184,7 +236,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
             })
             .catch(err => console.log(err))
 
-            setCommentInput({ commentTitle: '', comment: '' })
+        setCommentInput({ commentTitle: '', comment: '' })
     }
 
     return (
@@ -235,14 +287,22 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                         {/* maquetar los tags */}
                         <div className="flex flex-col">
                             {/* button añadir tag */}
-                            <div className="w-full my-3 flex gap-3 items-center">
+                            <div className="relative w-full my-3 flex gap-3 items-center">
                                 <input className=" flex-grow w-1/2 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
                                     value={tagInput}
-                                    onChange={(event) => setTagInput(event.target.value)}
+                                    onChange={handleChangeTags}
                                     placeholder="Add a tag..."
                                     name="name_tag"
                                 ></input>
-                                <button className="  px-3 py-1 border-2 border-[#3b82f6] text-[#3b82f6] text-[13px] "
+                                <ul className={`${flagVisible && suggestions.length ? 'absolute' : 'hidden'} w-3/5 left-[30px] -bottom-[208px] h-52 px-3 py-1 overflow-auto bg-[#3b82f6]/50 shadow`} >
+                                    {suggestions && suggestions.map(e => (
+                                        <li className="bg-amber-300 py-2.5 my-2 "
+                                            key={e.id}>
+                                            {e.name_tag}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <button className="  px-3 py-1 border-2 border-[#3b82f6] text-[#3b82f6] hover:border-[#5a99ff] hover:text-[#5a99ff] text-[13px] "
                                     onClick={handleAddTag} type="button" >Add</button>
                                 <img onClick={() => setTagsVisible(true)}
                                     className="size-6 cursor-pointer" src={tag} ></img>
@@ -250,10 +310,11 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                         </div>
 
                         {/* maquetar los comentarios */}
-                        <div className={` flex-none overflow-auto h-32 border border-[#bdd5ff]`}>
+                        <div className={`flex-none overflow-auto h-32 border border-[#bdd5ff]`}>
+                            <div className={`${!editable.comments ? 'static' : 'hidden'}`} >No comments yet...</div>
                             {editable.comments.map(comment => (
                                 <div className="mx-4 my-2 py-1.5 px-2.5 flex flex-col w-fit rounded-lg bg-[#88b4ff]"
-                                 key={comment.id}>
+                                    key={comment.id}>
                                     <h5 className="font-medium text-[15px]">{comment.user.name}</h5>
                                     <h6 className=" text-[14px]" >{comment.title}</h6>
                                     <p className="font-light text-[13px]" >{comment.comment}</p>
@@ -275,7 +336,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                                     placeholder="Comment..."
                                     name="comment"
                                 ></input>
-                                <button className="  px-3 py-1 border-2 border-[#3b82f6] text-[#3b82f6] text-[13px] "
+                                <button className="  px-3 py-1 border-2 border-[#3b82f6] text-[#3b82f6] hover:border-[#5a99ff] hover:text-[#5a99ff] text-[13px] "
                                     onClick={handleAddComment} type="button" >Add</button>
                             </div>
                         </div>

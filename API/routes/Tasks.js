@@ -136,12 +136,18 @@ module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
         const id = req.params.id
         const { email, ...restData } = req.body
 
+
+
         try {
             const item = await Model.findByPk(id)
             if (!item) return res.status(404).json({ message: 'Not found' })
             const assignedId = await Users.findOne({ where: { email } })
-            console.log(assignedId)
-            await item.update({ ...restData, user_id: assignedId.id })
+            console.log('esta vaina es el assignedId: ', assignedId)
+            if (!assignedId) {
+                await item.update({ ...restData, user_id: null})
+            } else {
+                await item.update({ ...restData, user_id: assignedId.id })
+            }
             res.json(item)
         } catch (error) {
             res.status(400).json({ error: error.message })
