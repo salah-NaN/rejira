@@ -14,6 +14,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
     const [first, setFirst] = useState(true)
     // suggestions for autocompleted tag feature 
     const [suggestions, setSuggestions] = useState([])
+    const [initialSuggestions, setInitialSuggestions] = useState([])
     const [flagVisible, setFlagVisible] = useState(false)
 
 
@@ -32,10 +33,11 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
         fetch(URL + '/tags', options)
             .then(res => res.json())
             .then(res => {
+                setInitialSuggestions(res)
                 setSuggestions(res)
             })
             .catch(err => console.log(err))
-    }, [])
+    }, [trigger])
 
     // para que cada vez de cambia el tagInputs que se haga un set del flagVisible
     useEffect(() => {
@@ -151,15 +153,22 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
     const handleChangeTags = event => {
         const input = event.target.value
 
-        console.log('este son las sugerencias: ' + suggestions)
-        // se va actualizando la lista de sugeridos dependiendo del input
 
-        console.log('este es el filtrado: ' + filtered)
+        // se va actualizando la lista de sugeridos dependiendo del input
+        const filtered = initialSuggestions.filter(suggestion => {
+            return suggestion.name_tag.toLowerCase().indexOf(input.toLowerCase()) === 0
+        })
+
+        // cada vez que cambia el input hago un set de las sugeridas filtradas
+        setSuggestions(filtered)
 
         // se cambia el valor
         setTagInput(input)
-        // cada vez que cambia el input hago un set de las sugeridas filtradas
-        // setSuggestions(filtered)
+    }
+    
+    const handleClickTagOnList = id => {
+        setTagInput(suggestions[id].name_tag)
+        setSuggestions([])
     }
 
     const handleAddTag = () => {
@@ -294,11 +303,12 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                                     placeholder="Add a tag..."
                                     name="name_tag"
                                 ></input>
-                                <ul className={`${flagVisible && suggestions.length ? 'absolute' : 'hidden'} w-3/5 left-[30px] -bottom-[208px] h-52 px-3 py-1 overflow-auto bg-[#3b82f6]/50 shadow`} >
-                                    {suggestions && suggestions.map(e => (
-                                        <li className="bg-amber-300 py-2.5 my-2 "
+                                <ul className={`${flagVisible && suggestions.length ? 'absolute' : 'hidden'} w-3/5 left-[30px] -bottom-[208px] h-52 px-3 py-1 overflow-auto bg-[#fafafa]/90 shadow-xl`} >
+                                    {suggestions && suggestions.map((e, index) => (
+                                        <li className=" text-[15px] px-1 py-2.5 border-b-[#ededed] border-b text-[#121212] my-2 cursor-pointer"
+                                        onClick={() => handleClickTagOnList(index)}
                                             key={e.id}>
-                                            {e.name_tag}
+                                            {'#'+e.name_tag}
                                         </li>
                                     ))}
                                 </ul>
@@ -311,7 +321,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
 
                         {/* maquetar los comentarios */}
                         <div className={`flex-none overflow-auto h-32 border border-[#bdd5ff]`}>
-                            <div className={`${!editable.comments ? 'static' : 'hidden'}`} >No comments yet...</div>
+                            <div className={`${!editable.comments.length ? 'static' : 'hidden'} px-3 py-1.5 text-sm text-gray-400 font-light `} >No comments yet...</div>
                             {editable.comments.map(comment => (
                                 <div className="mx-4 my-2 py-1.5 px-2.5 flex flex-col w-fit rounded-lg bg-[#88b4ff]"
                                     key={comment.id}>

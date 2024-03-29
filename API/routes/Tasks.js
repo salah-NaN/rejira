@@ -253,7 +253,6 @@ module.exports = (router, Model, check, Tags, Comments, Users, sequelize) => {
                     as: 'Assigned',
                     attributes: ['id', 'name']
                 }]
-                // hay que incluir comentarios tb include: [Tags, Comments]
             })
             if (!tasks) return res.status(404).json({ message: 'Not found' })
 

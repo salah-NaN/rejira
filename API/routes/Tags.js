@@ -22,10 +22,20 @@ module.exports = (router, Model, check, Tasks) => {
         try {
             const item = await Tasks.findByPk(task_id, { where: { project_id } })
             if (!item) return res.status(404).json({ message: 'Not found' })
-            const tagExists = await Model.findOne({ where: {name_tag: data.name_tag } })
-            if (tagExists) return res.status(404).json({ message: 'Already exists' })
+            // if tag is empty
+            if (!data.name_tag) return res.status(404).json({ message: 'Empty item' })
+
+            // a tag exists on this task
+            // const tagExists = await Model.findOne({ where: {name_tag: data.name_tag } })
+            // if (tagExists) return res.status(404).json({ message: 'Already exists' })
+
+            const tags = await item.getTags()
+
+            const gotIT = tags.filter(tag => tag.name_tag === data.name_tag)
+            if(gotIT.length) return res.status(400).json({message: 'Already exists'})
+
             const tag = await Model.create(data)
-            if (!tag) return res.status(404).json({ message: 'Not created' })
+            if (!tag) return res.status(400).json({ message: 'Not created' })
             await tag.addTasks(item)
             res.json(tag)
         } catch (error) {

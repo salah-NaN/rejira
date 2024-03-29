@@ -34,9 +34,9 @@ export default function NavBar() {
 
                     <div className="hidden
                     md:ml-20 md:flex md:gap-10 md:visible">
-                        <a href="#" >Docs</a>
+                        {/* <a href="#" >Docs</a>
                         <a href="#" >Services</a>
-                        <a href="#" >About us</a>
+                        <a href="#" >About us</a> */}
                     </div>
                 </div>
 

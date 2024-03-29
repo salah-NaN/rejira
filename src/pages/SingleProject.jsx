@@ -23,6 +23,7 @@ export default function SingleProject() {
     const [editable, setEditable] = useState({ id: -1, title: '', description: '', type: 'storie', priority: 'medium', email: '', comments: [], tags: [] })
     const [emptyState, setEmptyState] = useState(false)
     const [trigger, setTrigger] = useState(false)
+    const [titleProject, setTitleProject] = useState('')
 
 
 
@@ -75,6 +76,12 @@ export default function SingleProject() {
                 res.sort((a, b) => a.order - b.order)
                 setTasks(res)
             })
+            .catch(err => console.log(err))
+
+        // fetch to get project name
+        fetch(URL + '/projects/' + project_id, options)
+            .then(res => res.json())
+            .then(res => setTitleProject(res.title))
             .catch(err => console.log(err))
     }, [])
 
@@ -171,7 +178,7 @@ export default function SingleProject() {
     // tailwind stuff: bg-red-500/70 bg-orange-500/70  bg-gray-500/70
     return (
         <>
-        <Back/>
+        <Back title={titleProject} />
             <div className="px-8 flex gap-7 overflow-x-scroll h-lvh">
                 <DragDropContext className="flex gap-7 overflow-x-scroll"
                     onDragEnd={handleDragEnd}>

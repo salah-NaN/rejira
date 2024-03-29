@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Context from "../util/Context"
 
+
 const URL = 'http://localhost:3000/api'
 
 const initial = {
@@ -95,20 +96,6 @@ const Login = () => {
                 </form>
 
             </div>
-
-
-
-
-            {/* <h1>Register</h1>
-            <div>
-                <form onSubmit={handleSubmit}>
-                    <label>Email</label>
-                    <input name="email" onChange={handleForm} value={inputs["email"]}></input>
-                    <label>Password</label>
-                    <input name="password" onChange={handleForm} value={inputs["password"]} ></input>
-                    <button>Enter</button>
-                </form>
-            </div> */}
         </>
     )
 }
