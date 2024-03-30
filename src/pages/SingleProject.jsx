@@ -179,19 +179,19 @@ export default function SingleProject() {
     return (
         <>
         <Back title={titleProject} />
-            <div className="px-8 flex gap-7 overflow-x-scroll h-lvh">
+            <div className="select-none px-8 flex gap-7 overflow-x-scroll ">
                 <DragDropContext className="flex gap-7 overflow-x-scroll"
                     onDragEnd={handleDragEnd}>
                     {
                         tables.map(table => (
                             <div key={table} >
-                                <h3 className="pt-3 border-t-2 border-r-2 border-l-2 border-t-gray-300 border-r-gray-300 border-l-gray-300 bg-[#5593ff] text-2xl text-[#e8e8e8] font-semibold text-center" >{table}</h3>
+                                <h3 className="pt-3 border-t-2 border-r-2 border-l-2 border-t-gray-300 border-r-gray-300 border-l-gray-300 bg-[#5593ff] text-2xl text-[#e8e8e8] font-semibold text-center capitalize" >{table}</h3>
 
                                 <Droppable key={table} droppableId={table}>
                                     {(provided) => (
                                         <ul
-                                            className={`pt-4 ${table === 'backlog' ? 'border-r-2 border-l-2 pb-1 border-r-gray-300 border-l-gray-300' : 'border-b-2 border-r-2 border-l-2 border-b-gray-300 border-r-gray-300 border-l-gray-300'} min-w-[260px] ${table === 'backlog' ? 'min-h-[442px]': 'min-h-[500px]'} h-fit bg-[#5593ff]
-                                            ${table === 'backlog' ? 'lg:min-h-[542px]': 'lg:min-h-[600px]'}`}
+                                            className={`pt-4 ${table === 'backlog' ? 'border-r-2 border-l-2 pb-1 border-r-gray-300 border-l-gray-300' : 'border-b-2 border-r-2 border-l-2 border-b-gray-300 border-r-gray-300 border-l-gray-300'} min-w-[260px] ${table === 'backlog' ? 'max-h-[442px]': 'max-h-[500px]'} overflow-scroll h-fit bg-[#5593ff]
+                                            ${table === 'backlog' ? 'lg:min-h-[526px]': 'lg:min-h-[600px]'}`}
                                             {...provided.droppableProps} ref={provided.innerRef}>
                                             {tasks
                                                 .filter(task => task.stage === table)
@@ -227,7 +227,7 @@ export default function SingleProject() {
 
                                 {table === 'backlog' ?
                                     (
-                                        <div className="bg-[#5593ff] min-w-[260px] border-b-2 border-r-2 border-l-2 border-b-gray-300 border-r-gray-300 border-l-gray-300">
+                                        <div className="pt-4 bg-[#5593ff] min-w-[260px] border-b-2 border-r-2 border-l-2 border-b-gray-300 border-r-gray-300 border-l-gray-300">
                                             <div onClick={() => setIsOpen(true)}
                                                 className=" flex justify-center items-center border-[#e5e5e5] bg-[#88b4ff] border-2 mx-3 shadow-lg py-2 mb-4 cursor-pointer hover:bg-[#76a8ff] transition duration-200" >
                                                 <img className="size-5 p-0"

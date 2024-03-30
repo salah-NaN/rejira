@@ -72,7 +72,7 @@ const Login = () => {
         <>
 
 
-            <div className="flex flex-col items-center w-[360px] mx-auto my-24 p-12 bg-white shadow-2xl text-gray-800
+            <div className="select-none flex flex-col items-center w-[360px] mx-auto my-24 p-12 bg-white shadow-2xl text-gray-800
             sm:w-[360px] sm:my-30
             lg:my-20">
                 <h1 className="w-full mb-3 text-4xl font-light" >Welcome</h1>

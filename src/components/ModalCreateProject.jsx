@@ -50,7 +50,7 @@ export default function ModalCreateProject({ visible, setVisible, newProject, se
 
     return (
         <>
-            <div className={` ${visible ? 'fixed' : 'hidden'} top-0 left-0  overflow-y-auto overflow-x-hidden w-full h-dvh  bg-black bg-opacity-50 `}>
+            <div className={`select-none ${visible ? 'fixed' : 'hidden'} top-0 left-0  overflow-y-auto overflow-x-hidden w-full h-dvh  bg-black bg-opacity-50 `}>
                 <div className={` ${visible ? 'fixed' : 'hidden'} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50
                 w-10/12 h-[380px] bg-[#fafafa] shadow py-6 px-8
                 md:w-1/3`}>

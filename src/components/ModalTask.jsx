@@ -165,7 +165,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
         // se cambia el valor
         setTagInput(input)
     }
-    
+
     const handleClickTagOnList = id => {
         setTagInput(suggestions[id].name_tag)
         setSuggestions([])
@@ -250,119 +250,141 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
 
     return (
         <>
-            <div className={` ${visible ? 'fixed' : 'hidden'} top-0 left-0  overflow-y-auto overflow-x-hidden w-full h-dvh  bg-black bg-opacity-50 `}>
+            <div className={`select-none ${visible ? 'fixed' : 'hidden'} top-0 left-0  overflow-y-auto overflow-x-hidden w-full h-dvh  bg-black bg-opacity-50 `}>
                 <div className={` ${visible ? 'fixed' : 'hidden'} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50
                 w-10/12 h-9/12 bg-[#fafafa] shadow py-6 px-8
                 sm:w-3/5
                 md:w-6/12
-                lg:w-5/12`}>
+                lg:w-7/12 `}>
                     <div className="flex justify-between items-center ">
                         <h3 className="text-2xl font-semibold " >Edit task</h3>
                         <img onClick={() => setVisible(false)}
                             className="size-5 cursor-pointer"
                             src={close}></img>
                     </div>
-                    <form onSubmit={handleSubmitEdit}
-                        className="flex flex-col flex-wrap mt-7
-                        sm:mt-10">
-                        <label className=" text-[14px] ">Title</label>
-                        <input onChange={handleInputs} name="title" type="text"
-                            // value left
-                            value={editable.title}
-                            className="mb-5 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
-                        ></input>
-                        <label className=" text-[14px] 0">Description</label>
-                        <textarea onChange={handleInputs} name="description"
-                            value={editable?.description}
-                            className="mb-7 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
-                        ></textarea>
-                        <div className="mb-4 flex items-center gap-y-4 gap-x-3 ">
-                            <select value={editable.type} name="type" onChange={handleInputs} className="bg-[#fafafa] text-[#131313] font-[14px]">
-                                <option value='storie' >Storie</option>
-                                <option value='bug' >Bug</option>
-                                <option value='task' >Task</option>
-                            </select>
-                            <select value={editable.priority} name="priority" onChange={handleInputs} className="bg-[#fafafa] text-[#131313] font-[14px]">
-                                <option value='low' >Low</option>
-                                <option value='medium' >Medium</option>
-                                <option value='high' >High</option>
-                            </select>
-                            <input value={editable.email} className="w-full py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
-                                onChange={handleInputs}
-                                placeholder="Assigned to..."
-                                name="email"
-                            ></input>
-                        </div>
-                        {/* maquetar los tags */}
-                        <div className="flex flex-col">
-                            {/* button añadir tag */}
-                            <div className="relative w-full my-3 flex gap-3 items-center">
-                                <input className=" flex-grow w-1/2 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
-                                    value={tagInput}
-                                    onChange={handleChangeTags}
-                                    placeholder="Add a tag..."
-                                    name="name_tag"
-                                ></input>
-                                <ul className={`${flagVisible && suggestions.length ? 'absolute' : 'hidden'} w-3/5 left-[30px] -bottom-[208px] h-52 px-3 py-1 overflow-auto bg-[#fafafa]/90 shadow-xl`} >
-                                    {suggestions && suggestions.map((e, index) => (
-                                        <li className=" text-[15px] px-1 py-2.5 border-b-[#ededed] border-b text-[#121212] my-2 cursor-pointer"
-                                        onClick={() => handleClickTagOnList(index)}
-                                            key={e.id}>
-                                            {'#'+e.name_tag}
-                                        </li>
-                                    ))}
-                                </ul>
-                                <button className="  px-3 py-1 border-2 border-[#3b82f6] text-[#3b82f6] hover:border-[#5a99ff] hover:text-[#5a99ff] text-[13px] "
-                                    onClick={handleAddTag} type="button" >Add</button>
-                                <img onClick={() => setTagsVisible(true)}
-                                    className="size-6 cursor-pointer" src={tag} ></img>
-                            </div>
-                        </div>
 
-                        {/* maquetar los comentarios */}
-                        <div className={`flex-none overflow-auto h-32 border border-[#bdd5ff]`}>
-                            <div className={`${!editable.comments.length ? 'static' : 'hidden'} px-3 py-1.5 text-sm text-gray-400 font-light `} >No comments yet...</div>
-                            {editable.comments.map(comment => (
-                                <div className="mx-4 my-2 py-1.5 px-2.5 flex flex-col w-fit rounded-lg bg-[#88b4ff]"
-                                    key={comment.id}>
-                                    <h5 className="font-medium text-[15px]">{comment.user.name}</h5>
-                                    <h6 className=" text-[14px]" >{comment.title}</h6>
-                                    <p className="font-light text-[13px]" >{comment.comment}</p>
+
+                    <div className="w-full flex flex-col justify-center items-center gap-0
+                    lg:flex-row lg:gap-10">
+
+                        <form onSubmit={handleSubmitEdit}
+                            className="flex flex-col flex-wrap mt-7 mb-4
+                        sm:mt-10
+                        lg:w-1/2">
+                            <label className=" text-[14px] ">Title</label>
+                            <input onChange={handleInputs} name="title" type="text"
+                                // value left
+                                value={editable.title}
+                                className="mb-5 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
+                            ></input>
+                            <label className=" text-[14px] 0">Description</label>
+                            <textarea onChange={handleInputs} name="description"
+                                value={editable?.description}
+                                className="mb-7 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
+                            ></textarea>
+                            <div className="mb-4 flex items-center gap-y-4 gap-x-3 ">
+                                <select value={editable.type} name="type" onChange={handleInputs} className="bg-[#fafafa] text-[#131313] font-[14px]">
+                                    <option value='storie' >Storie</option>
+                                    <option value='bug' >Bug</option>
+                                    <option value='task' >Task</option>
+                                </select>
+                                <select value={editable.priority} name="priority" onChange={handleInputs} className="bg-[#fafafa] text-[#131313] font-[14px]">
+                                    <option value='low' >Low</option>
+                                    <option value='medium' >Medium</option>
+                                    <option value='high' >High</option>
+                                </select>
+                                <input value={editable.email} className="w-full py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
+                                    onChange={handleInputs}
+                                    placeholder="Assigned to..."
+                                    name="email"
+                                ></input>
+                            </div>
+
+
+
+                            <div className="flex justify-between mt-3">
+                                <button type="button"
+                                    onClick={() => setDeleteVisible(true)}
+                                    className="w-fit  px-6 py-1 text-white  bg-red-500/90 hover:bg-[#ff5353]/90 transition duration-200 shadow">
+                                    Drop
+                                </button>
+                                <button className="w-fit px-6 py-1 text-white bg-[#3b82f6] hover:bg-[#3b82f6]/90 transition duration-200 shadow"
+                                    onChange={handleOpenModal}>
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+
+                        <div className=" lg:border-l lg:border-l-[#3b82f6] lg:w-0 lg:h-[320px]" ></div>
+
+                        <div className="w-full
+                        lg:w-1/2" >
+                            <div className="border-b-[#3b82f6] w-full border-b mt-8 mb-10
+                            lg:border-none" ></div>
+
+                            {/* maquetar los tags */}
+                            <div className="flex flex-col">
+                                {/* button añadir tag */}
+                                <div className="relative w-full my-3 flex gap-3 items-center">
+                                    <input className=" flex-grow w-1/2 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
+                                        value={tagInput}
+                                        onChange={handleChangeTags}
+                                        placeholder="Add a tag..."
+                                        name="name_tag"
+                                    ></input>
+                                    <ul className={`${flagVisible && suggestions.length ? 'absolute' : 'hidden'} w-3/5 left-[30px] -bottom-[208px] h-52 overflow-auto bg-[#fafafa]/90 shadow-xl
+                                    lg:left-[21px]`} >
+                                        {suggestions && suggestions.map((e, index) => (
+                                            <li className=" text-[15px] px-4 py-3.5 border-b-[#ededed] border-b text-[#121212]  cursor-pointer hover:bg-[#e8e8e8] transition-all duration-200"
+                                                onClick={() => handleClickTagOnList(index)}
+                                                key={e.id}>
+                                                {'#' + e.name_tag}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <button className="  px-3 py-1 border-2 border-[#3b82f6] text-[#3b82f6] hover:border-[#5a99ff] hover:text-[#5a99ff] text-[13px] "
+                                        onClick={handleAddTag} type="button" >Add</button>
+                                    <img onClick={() => setTagsVisible(true)}
+                                        className="size-6 cursor-pointer" src={tag} ></img>
                                 </div>
-                            ))}
-                        </div>
-                        {/* añadir comentario */}
-                        <div className="">
-                            <input className="w-full mt-3 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
-                                value={commentInput.commentTitle}
-                                onChange={handleCommentInputs}
-                                placeholder="Title..."
-                                name="commentTitle"
-                            ></input>
-                            <div className="mt-3 flex justify-between items-center gap-3" >
-                                <input className="flex-grow py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
-                                    value={commentInput.comment}
+                            </div>
+
+                            {/* maquetar los comentarios */}
+                            <div className={`flex-none overflow-auto h-32 border border-[#bdd5ff]`}>
+                                <div className={`${!editable.comments.length ? 'static' : 'hidden'} px-3 py-1.5 text-sm text-gray-400 font-light cursor-default `} >No comments yet...</div>
+                                {editable.comments.map(comment => (
+                                    <div className="mx-4 my-2 py-1.5 px-2.5 flex flex-col w-fit rounded-lg bg-[#88b4ff]"
+                                        key={comment.id}>
+                                        <h5 className="font-medium text-[15px]">{comment.user.name}</h5>
+                                        <h6 className=" text-[14px]" >{comment.title}</h6>
+                                        <p className="font-light text-[13px]" >{comment.comment}</p>
+                                    </div>
+                                ))}
+                            </div>
+                            {/* añadir comentario */}
+                            <div className="">
+                                <input className="w-full mt-3 py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
+                                    value={commentInput.commentTitle}
                                     onChange={handleCommentInputs}
-                                    placeholder="Comment..."
-                                    name="comment"
+                                    placeholder="Title..."
+                                    name="commentTitle"
                                 ></input>
-                                <button className="  px-3 py-1 border-2 border-[#3b82f6] text-[#3b82f6] hover:border-[#5a99ff] hover:text-[#5a99ff] text-[13px] "
-                                    onClick={handleAddComment} type="button" >Add</button>
+                                <div className="mt-3 flex justify-between items-center gap-3" >
+                                    <input className="flex-grow py-1 pl-2 focus:outline-none border-b focus:border-b-[#3b82f6] transition duration-200 bg-[#fafafa] text-light text-[15px]"
+                                        value={commentInput.comment}
+                                        onChange={handleCommentInputs}
+                                        placeholder="Comment..."
+                                        name="comment"
+                                    ></input>
+                                    <button className="  px-3 py-1 border-2 border-[#3b82f6] text-[#3b82f6] hover:border-[#5a99ff] hover:text-[#5a99ff] text-[13px] "
+                                        onClick={handleAddComment} type="button" >Add</button>
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="flex justify-between mt-5">
-                            <button type="button"
-                                onClick={() => setDeleteVisible(true)}
-                                className="w-fit  px-6 py-1 text-white  bg-red-500/90 hover:bg-[#ff5353]/90 transition duration-200 shadow">
-                                Drop
-                            </button>
-                            <button className="w-fit px-6 py-1 text-white bg-[#3b82f6] hover:bg-[#3b82f6]/90 transition duration-200 shadow"
-                                onChange={handleOpenModal}>
-                                Save
-                            </button>
-                        </div>
-                    </form>
+
+
 
                     <div className={` ${deleteVisible ? 'fixed' : 'hidden'} top-0 left-0 overflow-y-auto overflow-x-hidden w-full h-full  bg-black bg-opacity-20 `}>
                         <div className={`${deleteVisible ? 'fixed' : 'hidden'}  top-1/2 left-1/2 w-10/12 h-24 bg-[#fafafa] -translate-x-1/2 -translate-y-1/2 z-70`} >

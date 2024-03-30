@@ -9,7 +9,10 @@ export default function DropAddTask({ isOpen, setIsOpen, id, trigger, setTrigger
     const [inputs, setInputs] = useState({title: '', type: 'storie'})
 
 
+
+
     const dropdownRef = useRef(null);
+    const inputRef = useRef()
 
     // useEffects
     // to close the mini-dropdown when you click outside it
@@ -26,6 +29,10 @@ export default function DropAddTask({ isOpen, setIsOpen, id, trigger, setTrigger
             document.removeEventListener('mousedown', handleOutsideClick);
         };
     }, []);
+
+    useEffect(() => {
+        inputRef.current.select()
+    }, [isOpen])
 
 
 
@@ -57,11 +64,16 @@ export default function DropAddTask({ isOpen, setIsOpen, id, trigger, setTrigger
         setInputs({title: '', type: 'storie'})
     }
 
+    // to execute below func when Enter key is pressed
+    const handlePressEnter = (event) => {
+        if(event.key === 'Enter') handleCreateTask()
+    }
+
 
     return (
 
         <div
-            className={` ${isOpen ? 'static' : 'hidden'}`} ref={dropdownRef}>
+            className={`select-none ${isOpen ? 'static' : 'hidden'}`} ref={dropdownRef}>
             <div className=" flex flex-col border-[#e5e5e5] bg-[#5896ff] border-2 mx-3 shadow-lg mb-4" >
                 <div className="flex justify-between items-center w-10/12 mx-auto mt-2 mb-1">
                     <label className=" text-[15px] text-[#fafafa]" >Add a new task...</label>
@@ -71,7 +83,9 @@ export default function DropAddTask({ isOpen, setIsOpen, id, trigger, setTrigger
                 <div className="flex justify-between items-center gap-4 w-10/12 mx-auto">
                     <input onChange={handleInputs}
                         name="title"
+                        ref={inputRef}
                         value={inputs.title}
+                        onKeyPress={handlePressEnter}
                         className="w-10/12 mx-auto mb-2 mt-1 pl-1 pb-1 bg-[#5896ff] focus:outline-none focus:border-b-[#eaeaea] transition duration-200 text-light text-[14px] text-[#eaeaea]  border-[#8cb6ff] border-b" >
                     </input>
                     <select name="type" onChange={handleInputs} className="bg-[#5896ff] text-[#fafafa] font-[14px]">

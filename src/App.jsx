@@ -72,6 +72,7 @@ function App() {
   return (
     <Context.Provider value={data}>
       <NavBar />
+      <div className='h-20' ></div>
       <Outlet />
     </Context.Provider>
 
