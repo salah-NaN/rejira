@@ -74,6 +74,7 @@ export default function SingleProject() {
             .then(res => {
                 // si el codigo funciona, funciona, no se toca
                 res.sort((a, b) => a.order - b.order)
+                console.log(res)
                 setTasks(res)
             })
             .catch(err => console.log(err))
@@ -118,12 +119,14 @@ export default function SingleProject() {
 
     // funcs 
     const handleDragEnd = (result) => {
+        console.log(result)
         if (!result.destination) return;
         const { source, destination, draggableId } = result
 
         // tasks clone
         const clone = [...tasks]
-
+        console.log('clone')
+        console.log(clone)
         if (source.droppableId === destination.droppableId) {
             const allowed = clone.filter(task => task.stage == destination.droppableId)
             const notAllowed = clone.filter(task => task.stage != destination.droppableId)
@@ -138,7 +141,7 @@ export default function SingleProject() {
             const rest = clone.filter(task => (task.stage != destination.droppableId) && (task.stage != source.droppableId))
             const [draggableTask] = origin.splice(source.index, 1)
             draggableTask.stage = destination.droppableId
-            dest.push(draggableTask)
+            dest.splice(destination.index, 0, draggableTask)
             setTasks([...rest, ...origin, ...dest])
             // new lines
             setFlag(!flag)
