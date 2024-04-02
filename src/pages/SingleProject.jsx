@@ -79,7 +79,7 @@ export default function SingleProject() {
             .catch(err => console.log(err))
 
         // fetch to get project name
-        fetch(URL + '/projects/' + project_id, options)
+        fetch(URL + '/allProjects/' + project_id, options)
             .then(res => res.json())
             .then(res => setTitleProject(res.title))
             .catch(err => console.log(err))

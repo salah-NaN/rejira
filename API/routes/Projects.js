@@ -6,6 +6,7 @@ const { readItems, readItem, createItem, updateItem, deleteItem } = require('../
 
 module.exports = (router, Model, check) => {
     router.get('/projects', check, async (req, res) => await readItems(req, res, Model))
+    router.get('/allProjects/:id', check, async (req, res) => await readItem(req, res, Model))
     router.post('/projects', check, async (req, res) => await createItem(req, res, Model))
 
 
