@@ -268,7 +268,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
                     lg:flex-row lg:gap-10">
 
                         <form onSubmit={handleSubmitEdit}
-                            className="flex flex-col flex-wrap mt-7 mb-4
+                            className="flex flex-col flex-wrap mt-7 mb-4 w-full
                         sm:mt-10
                         lg:w-1/2">
                             <label className=" text-[14px] ">Title</label>
