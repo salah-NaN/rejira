@@ -34,7 +34,7 @@ export default function Home() {
                 },
                 credentials: 'include'
             }
-            fetch(URL + '/projectsByUser', options)
+            fetch(URL + '/projects', options)
                 .then(res => res.json())
                 .then(res => {
                     console.log(res)

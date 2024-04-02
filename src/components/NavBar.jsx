@@ -22,7 +22,7 @@ export default function NavBar() {
     return (
 
         <>
-            <nav className='select-none fixed z-50 top-0 h-20 w-full flex justify-between items-center pl-10 pr-8 bg-[#ffffff] shadow-lg
+            <nav className='select-none fixed  z-10 top-0 h-20 w-full flex justify-between items-center pl-10 pr-8 bg-[#ffffff] shadow-lg
             md:pl-20 md:pr-16
             lg:pl-24'>
                 <div className="flex justify-center items-center gap-4">

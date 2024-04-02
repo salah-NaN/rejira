@@ -250,7 +250,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
 
     return (
         <>
-            <div className={`select-none ${visible ? 'fixed' : 'hidden'} top-0 left-0  overflow-y-auto overflow-x-hidden w-full h-dvh  bg-black bg-opacity-50 `}>
+            <div className={`select-none ${visible ? 'fixed' : 'hidden'} top-0 left-0  overflow-y-auto overflow-x-hidden w-full h-dvh z-50 bg-black bg-opacity-50 `}>
                 <div className={` ${visible ? 'fixed' : 'hidden'} top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50
                 w-10/12 h-9/12 bg-[#fafafa] shadow py-6 px-8
                 sm:w-3/5
@@ -319,7 +319,7 @@ export default function ModalTask({ visible, setVisible, editable, setEditable, 
 
                         <div className="w-full
                         lg:w-1/2" >
-                            <div className="border-b-[#3b82f6] w-full border-b mt-8 mb-10
+                            <div className="border-b-[#3b82f6] w-full border-b mt-1.5 mb-2 
                             lg:border-none" ></div>
 
                             {/* maquetar los tags */}

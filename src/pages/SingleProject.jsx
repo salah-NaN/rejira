@@ -190,8 +190,8 @@ export default function SingleProject() {
                                 <Droppable key={table} droppableId={table}>
                                     {(provided) => (
                                         <ul
-                                            className={`pt-4 ${table === 'backlog' ? 'border-r-2 border-l-2 pb-1 border-r-gray-300 border-l-gray-300' : 'border-b-2 border-r-2 border-l-2 border-b-gray-300 border-r-gray-300 border-l-gray-300'} min-w-[260px] ${table === 'backlog' ? 'max-h-[442px]': 'max-h-[500px]'} overflow-scroll h-fit bg-[#5593ff]
-                                            ${table === 'backlog' ? 'lg:min-h-[526px]': 'lg:min-h-[600px]'}`}
+                                            className={`pt-4 ${table === 'backlog' ? 'border-r-2 border-l-2 pb-1 border-r-gray-300 border-l-gray-300' : 'border-b-2 border-r-2 border-l-2 border-b-gray-300 border-r-gray-300 border-l-gray-300'} min-w-[260px] ${table === 'backlog' ? 'min-h-[426px]': 'min-h-[500px]'} ${table === 'backlog' ? 'max-h-[426px]': 'max-h-[500px]'} overflow-scroll h-fit bg-[#5593ff]
+                                            ${table === 'backlog' ? 'lg:min-h-[526px]': 'lg:min-h-[600px]'} ${table === 'backlog' ? 'lg:max-h-[526px]': 'lg:max-h-[600px]'}`}
                                             {...provided.droppableProps} ref={provided.innerRef}>
                                             {tasks
                                                 .filter(task => task.stage === table)
